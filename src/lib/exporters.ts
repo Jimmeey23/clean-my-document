@@ -142,7 +142,7 @@ async function exportDocx(md: string, title: string) {
   const lines = md.split("\n");
   let inCode = false; let codeBuf: string[] = [];
 
-  const para = (text: string, opts: { heading?: HeadingLevel; bold?: boolean; italic?: boolean; size?: number } = {}) => {
+  const para = (text: string, opts: { heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel]; bold?: boolean; italic?: boolean; size?: number } = {}) => {
     children.push(new Paragraph({
       heading: opts.heading,
       alignment: AlignmentType.LEFT,
