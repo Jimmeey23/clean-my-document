@@ -7,7 +7,7 @@ import mammoth from "mammoth";
 import { Toaster } from "@/components/ui/sonner";
 import { DocPreview } from "@/components/DocPreview";
 import { ExportMenu } from "@/components/ExportMenu";
-import { cleanText } from "@/server/clean.functions";
+import { cleanText } from "@/utils/clean.functions";
 
 export const Route = createFileRoute("/")({
   component: Home,
