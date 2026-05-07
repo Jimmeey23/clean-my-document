@@ -1,30 +1,88 @@
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { useEffect, useRef } from "react";
+import { marked } from "marked";
+import TurndownService from "turndown";
 import { motion } from "framer-motion";
+import type { ThemeId } from "@/lib/themes";
+import { THEMES } from "@/lib/themes";
+import { Sparkles } from "lucide-react";
 
-export function DocPreview({ markdown }: { markdown: string }) {
+marked.setOptions({ gfm: true, breaks: false });
+const td = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", bulletListMarker: "-" });
+td.keep(["table", "thead", "tbody", "tr", "th", "td"]);
+
+type Props = {
+  markdown: string;
+  themeId: ThemeId;
+  editable: boolean;
+  title: string;
+  onChange: (md: string) => void;
+};
+
+export function DocPreview({ markdown, themeId, editable, title, onChange }: Props) {
+  const ref = useRef<HTMLDivElement>(null);
+  const theme = THEMES.find((t) => t.id === themeId) ?? THEMES[0];
+
+  // Render markdown -> HTML on external changes only
+  useEffect(() => {
+    if (!ref.current) return;
+    const active = document.activeElement === ref.current;
+    if (active) return; // don't blow away user edits while typing
+    const html = marked.parse(markdown || "") as string;
+    ref.current.innerHTML = html;
+  }, [markdown]);
+
+  const handleInput = () => {
+    if (!ref.current) return;
+    const md = td.turndown(ref.current.innerHTML);
+    onChange(md);
+  };
+
   if (!markdown) {
     return (
-      <div className="doc-paper flex flex-col items-center justify-center text-center" style={{ minHeight: 480 }}>
-        <div className="max-w-md">
-          <div className="mb-4 inline-block rounded-full bg-[oklch(0.92_0.04_80)] px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[oklch(0.40_0.08_50)]">Preview</div>
-          <h1 style={{ fontFamily: "var(--font-display)" }} className="text-3xl">Your formatted document will appear here</h1>
-          <p className="mt-3 text-base text-[oklch(0.40_0.02_60)]">
-            Paste any messy text on the left, hit <em>Refine</em>, and watch raw notes turn into a publication-ready document.
-          </p>
+      <div className={`doc-sheet ${theme.className}`}>
+        <div className="doc-header">
+          <div className="brand"><Sparkles className="h-5 w-5" /> Lumen</div>
+          <div className="meta">Preview</div>
+        </div>
+        <div className="doc-body flex flex-col items-center justify-center text-center" style={{ minHeight: 480 }}>
+          <div className="max-w-md">
+            <h1>Your formatted document will appear here</h1>
+            <p style={{ color: "#666" }}>Paste raw text on the left, hit <em>Refine</em>, and watch it become a publication-ready document — fully editable inline.</p>
+          </div>
+        </div>
+        <div className="doc-footer">
+          <span>Lumen · Document Refinery</span>
+          <span>Page 1</span>
         </div>
       </div>
     );
   }
+
   return (
-    <motion.article
-      key={markdown.slice(0, 60)}
-      initial={{ opacity: 0, y: 10 }}
+    <motion.div
+      key={themeId}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="doc-paper"
+      transition={{ duration: 0.3 }}
+      className={`doc-sheet ${theme.className}`}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
-    </motion.article>
+      <div className="doc-header">
+        <div className="brand"><Sparkles className="h-5 w-5" /> Lumen</div>
+        <div className="meta">{new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</div>
+      </div>
+      <div
+        ref={ref}
+        className="doc-body"
+        contentEditable={editable}
+        suppressContentEditableWarning
+        spellCheck
+        onInput={handleInput}
+        onBlur={handleInput}
+      />
+      <div className="doc-footer">
+        <span>{title || "Untitled Document"}</span>
+        <span>Crafted with Lumen</span>
+      </div>
+    </motion.div>
   );
 }
