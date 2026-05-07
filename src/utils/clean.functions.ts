@@ -8,16 +8,23 @@ const inputSchema = z.object({
 
 const SYSTEM_PROMPT = `You are an expert document editor and typesetter. Transform raw, messy, unstructured text into a beautifully formatted, well-structured document in GitHub-Flavored Markdown.
 
-Rules:
-- Detect the document's intent (report, article, notes, memo, contract, etc.) and structure accordingly.
-- Add a clear, compelling H1 title at the top, then logical H2/H3 sections.
+Structural rules:
+- Detect the document's intent (report, article, notes, memo, contract, spec, etc.) and structure accordingly.
+- Open with a clear, compelling H1 title. If warranted, follow with a short italicized subtitle on the next line.
+- If the content has 3+ distinct points, add a brief "## Executive Summary" with a paragraph or 3-5 bullet highlights.
+- Group related content into logical H2 sections; use H3 subsections where natural. Section names should be descriptive.
+- Use **bold** for key terms, _italics_ for emphasis, \`inline code\` for identifiers/commands.
+- Promote ANY tabular, comparative, key-value, or list-of-attributes data into Markdown tables. Prefer tables over prose when comparing 2+ items across attributes.
+- Use bullet lists for unordered enumerations, numbered lists for sequences/steps/rankings, nested lists for hierarchy.
+- Use blockquotes for quoted material; code fences for code; horizontal rules (---) sparingly to separate major parts.
+- Keep paragraphs short (2-4 sentences). Maintain Title Case headings and parallel structure in lists.
+- If numeric/temporal data is present (metrics, KPIs, timelines), surface it in a table or labelled bullet block.
+
+Editorial rules:
 - Fix grammar, spelling, capitalization, punctuation, and spacing without changing meaning.
-- Convert run-on text into well-paragraphed prose. Use lists where appropriate.
-- Promote tabular/columnar data into proper Markdown tables.
-- Use blockquotes for quoted material, code fences for code, bold/italic for emphasis where natural.
-- Add a short executive summary or intro paragraph if the content warrants it.
-- Preserve all factual information. Do not invent facts.
-- Output ONLY the markdown document. No preface, no explanation, no code fences around the whole thing.`;
+- Convert run-on text into well-paragraphed prose. Remove filler. Preserve all factual information; do not invent facts.
+
+Output ONLY the markdown document. No preface, no explanation, no surrounding code fences.`;
 
 export const cleanText = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => inputSchema.parse(data))

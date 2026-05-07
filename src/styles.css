@@ -96,32 +96,100 @@
 /* Imported web fonts */
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
-/* Document preview styles (paper) */
-.doc-paper {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-display);
-  padding: 4rem 3.5rem;
-  border-radius: 6px;
+/* Document preview - shared sheet */
+.doc-sheet {
+  background: #ffffff;
+  color: #111;
+  border: 1px solid oklch(0 0 0 / 0.12);
+  border-radius: 4px;
   box-shadow: var(--shadow-elegant);
-  min-height: 600px;
-  line-height: 1.7;
+  min-height: 720px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
-.doc-paper h1 { font-size: 2.4rem; font-weight: 700; margin: 0 0 1rem; border-bottom: 2px solid oklch(0 0 0 / 0.1); padding-bottom: 0.6rem; }
-.doc-paper h2 { font-size: 1.65rem; font-weight: 600; margin: 1.8rem 0 0.6rem; color: oklch(0.30 0.06 50); }
-.doc-paper h3 { font-size: 1.25rem; font-weight: 600; margin: 1.2rem 0 0.4rem; }
-.doc-paper p { margin: 0.75rem 0; font-size: 1.05rem; }
-.doc-paper ul, .doc-paper ol { margin: 0.6rem 0 0.6rem 1.5rem; }
-.doc-paper li { margin: 0.25rem 0; }
-.doc-paper blockquote { border-left: 3px solid var(--color-primary); padding: 0.4rem 1rem; margin: 1rem 0; font-style: italic; color: oklch(0.30 0.02 60); background: oklch(0.95 0.02 80); }
-.doc-paper code { background: oklch(0.93 0.01 80); padding: 0.1rem 0.35rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.9em; }
-.doc-paper pre { background: oklch(0.15 0.01 60); color: oklch(0.94 0.012 80); padding: 1rem; border-radius: 8px; overflow-x: auto; }
-.doc-paper pre code { background: transparent; color: inherit; padding: 0; }
-.doc-paper table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-family: var(--font-sans); font-size: 0.95rem; }
-.doc-paper th, .doc-paper td { border: 1px solid oklch(0 0 0 / 0.12); padding: 0.5rem 0.75rem; text-align: left; }
-.doc-paper th { background: oklch(0.92 0.02 80); font-weight: 600; }
-.doc-paper a { color: oklch(0.45 0.15 250); text-decoration: underline; }
-.doc-paper hr { border: none; border-top: 1px solid oklch(0 0 0 / 0.12); margin: 2rem 0; }
+.doc-sheet .doc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2.25rem; border-bottom: 1px solid oklch(0 0 0 / 0.08);
+  background: #fff;
+}
+.doc-sheet .doc-header .brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; letter-spacing: -0.01em; color: #111; }
+.doc-sheet .doc-header .brand img, .doc-sheet .doc-header .brand svg { height: 28px; width: auto; }
+.doc-sheet .doc-header .meta { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #888; }
+.doc-sheet .doc-footer {
+  padding: 0.85rem 2.25rem; border-top: 1px solid oklch(0 0 0 / 0.08);
+  display: flex; justify-content: space-between; font-size: 11px; color: #888;
+  letter-spacing: 0.06em;
+}
+.doc-sheet .doc-body {
+  flex: 1; padding: 3rem 3rem; line-height: 1.7;
+  outline: none;
+}
+.doc-sheet .doc-body:focus { box-shadow: inset 0 0 0 2px oklch(0.78 0.13 75 / 0.35); border-radius: 2px; }
+
+/* Base markdown styling — overridden by themes */
+.doc-body h1 { font-size: 2.1rem; font-weight: 700; margin: 0 0 1rem; line-height: 1.15; }
+.doc-body h2 { font-size: 1.45rem; font-weight: 600; margin: 1.8rem 0 0.5rem; }
+.doc-body h3 { font-size: 1.15rem; font-weight: 600; margin: 1.2rem 0 0.4rem; }
+.doc-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.doc-body p { margin: 0.7rem 0; font-size: 1rem; }
+.doc-body ul, .doc-body ol { margin: 0.6rem 0 0.6rem 1.4rem; padding-left: 0.5rem; }
+.doc-body li { margin: 0.3rem 0; }
+.doc-body ul li::marker { color: oklch(0.55 0.04 60); }
+.doc-body blockquote { border-left: 3px solid #111; padding: 0.4rem 1rem; margin: 1rem 0; font-style: italic; color: #444; background: #fafafa; }
+.doc-body code { background: #f3f3f0; padding: 0.1rem 0.35rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.9em; }
+.doc-body pre { background: #111; color: #f5f5f0; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+.doc-body pre code { background: transparent; color: inherit; padding: 0; }
+.doc-body table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.95rem; }
+.doc-body th, .doc-body td { border: 1px solid #e2e2dc; padding: 0.55rem 0.8rem; text-align: left; vertical-align: top; }
+.doc-body th { background: #f7f5ee; font-weight: 600; }
+.doc-body a { color: #1a4d8c; text-decoration: underline; text-underline-offset: 2px; }
+.doc-body hr { border: none; border-top: 1px solid #e2e2dc; margin: 2rem 0; }
+.doc-body strong { font-weight: 700; }
+.doc-body img { max-width: 100%; border-radius: 4px; }
+
+/* === Theme: Modern Minimal (default) === */
+.theme-modern { font-family: "Inter", system-ui, sans-serif; color: #111; }
+.theme-modern .doc-body h1 { border-bottom: 1px solid #e6e6e0; padding-bottom: 0.7rem; letter-spacing: -0.02em; }
+.theme-modern .doc-body h2 { color: #111; letter-spacing: -0.01em; }
+.theme-modern .doc-body h2::before { content: ""; display: inline-block; width: 14px; height: 2px; background: #111; vertical-align: middle; margin-right: 0.6rem; transform: translateY(-3px); }
+
+/* === Theme: Editorial (warm) === */
+.theme-editorial { font-family: "Fraunces", "Cormorant Garamond", serif; background: #fdfbf5; color: #1a1610; }
+.theme-editorial .doc-body h1 { border-bottom: 2px solid #d4b675; padding-bottom: 0.5rem; }
+.theme-editorial .doc-body h2 { color: #7a5a1f; font-style: italic; }
+.theme-editorial .doc-body blockquote { background: #f5efdf; border-left-color: #c8a25a; }
+
+/* === Theme: Classic Report === */
+.theme-classic { font-family: "Times New Roman", Times, serif; color: #1a1a1a; }
+.theme-classic .doc-body h1 { text-align: center; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.8rem; border-bottom: 3px double #333; padding-bottom: 0.6rem; }
+.theme-classic .doc-body h2 { text-transform: uppercase; letter-spacing: 0.05em; font-size: 1.15rem; border-bottom: 1px solid #999; padding-bottom: 0.2rem; }
+.theme-classic .doc-body p { text-align: justify; text-indent: 1.2rem; }
+
+/* === Theme: Technical === */
+.theme-technical { font-family: "Inter", system-ui, sans-serif; color: #0e1116; }
+.theme-technical .doc-body h1 { font-family: var(--font-mono); font-size: 1.7rem; color: #0e1116; }
+.theme-technical .doc-body h2 { font-family: var(--font-mono); font-size: 1.05rem; text-transform: uppercase; color: #2563eb; letter-spacing: 0.05em; }
+.theme-technical .doc-body h3 { font-family: var(--font-mono); font-size: 0.92rem; text-transform: uppercase; color: #555; }
+.theme-technical .doc-body th { background: #eef3fb; }
+
+/* === Theme: Noir Dark === */
+.theme-noir { background: #161616; color: #ececec; }
+.theme-noir .doc-body { color: #ececec; }
+.theme-noir .doc-body h1 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+.theme-noir .doc-body h2 { color: #f0c66c; }
+.theme-noir .doc-body code { background: #2a2a2a; color: #f5f5f0; }
+.theme-noir .doc-body blockquote { background: #1f1f1f; color: #ddd; border-left-color: #f0c66c; }
+.theme-noir .doc-body th { background: #232323; color: #fff; }
+.theme-noir .doc-body th, .theme-noir .doc-body td { border-color: #333; }
+.theme-noir .doc-header, .theme-noir .doc-footer { background: #161616; border-color: #2a2a2a; color: #999; }
+.theme-noir .doc-header .brand { color: #fff; }
+
+/* === Theme: Ivory Premium === */
+.theme-ivory { background: #fbf8f1; color: #2a2418; font-family: "Fraunces", serif; }
+.theme-ivory .doc-body h1 { font-weight: 900; letter-spacing: -0.025em; font-size: 2.4rem; }
+.theme-ivory .doc-body h2 { color: #6b4f1d; font-weight: 600; }
+.theme-ivory .doc-body h2::after { content: ""; display: block; width: 36px; height: 2px; background: #c8a25a; margin-top: 0.35rem; }
 
 .gold-text {
   background: var(--gradient-gold);
