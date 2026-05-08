@@ -240,10 +240,16 @@ function Home() {
 
             {/* Controls */}
             <div className="mt-4 space-y-3">
-              <ControlRow label="Style">
-                {STYLES.map((s) => (
-                  <Chip key={s.id} active={style === s.id} onClick={() => setStyle(s.id)}>{s.label}</Chip>
-                ))}
+              <ControlRow label="Type">
+                <select
+                  value={docType}
+                  onChange={(e) => setDocType(e.target.value)}
+                  className="rounded-lg border border-border bg-background/60 px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none"
+                >
+                  {DOC_TYPES.map((d) => (
+                    <option key={d.id} value={d.id}>{d.label}</option>
+                  ))}
+                </select>
               </ControlRow>
               <ControlRow label="Tone">
                 {TONES.map((t) => (
