@@ -311,3 +311,175 @@
   display: block; font-family: var(--font-sans); font-size: 0.7rem; text-transform: uppercase;
   letter-spacing: 0.15em; color: #25c6e6; margin-bottom: 0.5rem; font-weight: 700;
 }
+
+/* ============================================================
+   PREMIUM LAYER — Refined bullets, dynamic layouts, callouts,
+   stat cards, section dividers, premium table styling.
+   ============================================================ */
+
+/* --- Refined bullet system --- */
+.doc-body ul { list-style: none; padding-left: 0.25rem; }
+.doc-body ul > li {
+  position: relative; padding-left: 1.4rem; margin: 0.45rem 0;
+}
+.doc-body ul > li::before {
+  content: ""; position: absolute; left: 0.15rem; top: 0.7em;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--p57-cyan, #25c6e6);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--p57-cyan, #25c6e6) 18%, transparent);
+}
+.doc-body ul ul > li::before {
+  background: transparent; border: 1.5px solid var(--p57-navy, #0a2342);
+  box-shadow: none; width: 7px; height: 7px; border-radius: 2px; transform: rotate(45deg);
+  top: 0.65em;
+}
+.doc-body ul ul ul > li::before {
+  background: transparent; border-top: 1.5px solid #888; border-right: 1.5px solid #888;
+  box-shadow: none; width: 6px; height: 6px; border-radius: 0; transform: rotate(45deg);
+  top: 0.7em;
+}
+.doc-body ol { list-style: none; counter-reset: ol-counter; padding-left: 0.25rem; }
+.doc-body ol > li {
+  counter-increment: ol-counter; position: relative; padding-left: 2.2rem; margin: 0.55rem 0;
+}
+.doc-body ol > li::before {
+  content: counter(ol-counter, decimal-leading-zero);
+  position: absolute; left: 0; top: 0.05em;
+  font-family: var(--font-mono); font-size: 0.78em; font-weight: 700;
+  color: var(--p57-cyan, #25c6e6);
+  background: color-mix(in oklab, var(--p57-cyan, #25c6e6) 10%, transparent);
+  padding: 0.15rem 0.4rem; border-radius: 4px;
+  letter-spacing: 0.03em;
+}
+
+/* Task lists from GFM */
+.doc-body input[type="checkbox"] {
+  accent-color: var(--p57-cyan, #25c6e6); margin-right: 0.5rem; transform: translateY(1px);
+}
+
+/* --- Premium tables --- */
+.doc-body table {
+  border: none; border-collapse: separate; border-spacing: 0;
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 8px 24px -12px rgba(10,35,66,0.12);
+}
+.doc-body thead th {
+  background: linear-gradient(180deg, #f7fbfd, #eef6fa);
+  border-bottom: 2px solid var(--p57-cyan, #25c6e6);
+  text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.78rem;
+  color: var(--p57-navy, #0a2342); padding: 0.7rem 0.9rem;
+}
+.doc-body tbody tr:nth-child(even) td { background: #fbfdfe; }
+.doc-body tbody tr:hover td { background: #f1fafd; }
+.doc-body td { border: none; border-bottom: 1px solid #eef2f5; padding: 0.65rem 0.9rem; }
+
+/* --- Premium blockquote callouts --- */
+.doc-body blockquote {
+  position: relative; border: none; border-left: 4px solid var(--p57-cyan, #25c6e6);
+  background: linear-gradient(180deg, #f5fbfd, #ffffff);
+  padding: 0.9rem 1.1rem 0.9rem 1.3rem; border-radius: 0 8px 8px 0;
+  font-style: normal; color: #1b2a3f;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+.doc-body blockquote p:first-child { margin-top: 0; }
+.doc-body blockquote p:last-child { margin-bottom: 0; }
+.doc-body blockquote p:first-child strong:first-child { color: var(--p57-navy, #0a2342); }
+
+/* --- Section divider --- */
+.doc-body hr {
+  border: none; height: 1px; margin: 2.5rem auto;
+  background: linear-gradient(90deg, transparent, #d6dde6 20%, #d6dde6 80%, transparent);
+  position: relative;
+}
+.doc-body hr::after {
+  content: "✦"; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%); background: #fff; padding: 0 0.6rem;
+  color: var(--p57-cyan, #25c6e6); font-size: 0.85rem;
+}
+
+/* --- Drop cap helper (auto on first paragraph after H1 in editorial themes) --- */
+.theme-p57-editorial .doc-body h1 + p::first-letter,
+.theme-editorial .doc-body h1 + p::first-letter,
+.theme-ivory .doc-body h1 + p::first-letter {
+  font-family: "Playfair Display", serif; font-weight: 900;
+  float: left; font-size: 3.6rem; line-height: 0.9;
+  padding: 0.35rem 0.55rem 0 0; color: var(--p57-navy, #0a2342);
+}
+
+/* --- Dynamic layout primitives (model can emit raw HTML) --- */
+.doc-body .cols-2,
+.doc-body .cols-3 {
+  display: grid; gap: 1.25rem; margin: 1.25rem 0;
+}
+.doc-body .cols-2 { grid-template-columns: 1fr 1fr; }
+.doc-body .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 720px) {
+  .doc-body .cols-2, .doc-body .cols-3 { grid-template-columns: 1fr; }
+}
+
+.doc-body .card {
+  background: #fff; border: 1px solid #e6ecf2; border-radius: 10px;
+  padding: 1rem 1.1rem; box-shadow: 0 4px 14px -8px rgba(10,35,66,0.18);
+}
+.doc-body .card h3, .doc-body .card h4 { margin-top: 0; }
+
+.doc-body .stat {
+  display: flex; flex-direction: column; gap: 0.2rem;
+  background: linear-gradient(180deg, #f7fbfd, #ffffff);
+  border: 1px solid #e6ecf2; border-left: 3px solid var(--p57-cyan, #25c6e6);
+  padding: 0.85rem 1rem; border-radius: 8px;
+}
+.doc-body .stat .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #6b7785; }
+.doc-body .stat .value { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; color: var(--p57-navy, #0a2342); line-height: 1.1; }
+.doc-body .stat .delta { font-size: 0.78rem; color: #2d8c5b; font-weight: 600; }
+.doc-body .stat .delta.neg { color: #c0392b; }
+
+.doc-body .callout {
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  border-radius: 10px; padding: 0.9rem 1.1rem; margin: 1.1rem 0;
+  border: 1px solid; background: #fff;
+}
+.doc-body .callout .icon { font-size: 1.15rem; line-height: 1.4; }
+.doc-body .callout.tip { background: #f1fafd; border-color: #b9eef8; color: #0a2342; }
+.doc-body .callout.warn { background: #fff7ec; border-color: #f5d28a; color: #5a3a00; }
+.doc-body .callout.danger { background: #fdecec; border-color: #f4b4b4; color: #6a1a1a; }
+.doc-body .callout.success { background: #ecfaef; border-color: #b8e6c4; color: #1f5132; }
+.doc-body .callout.note { background: #f6f6f8; border-color: #e1e1e8; color: #2a2a33; }
+
+.doc-body .badge {
+  display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+  background: color-mix(in oklab, var(--p57-cyan, #25c6e6) 16%, transparent);
+  color: var(--p57-navy, #0a2342); border: 1px solid color-mix(in oklab, var(--p57-cyan, #25c6e6) 35%, transparent);
+}
+
+.doc-body .kicker {
+  display: block; font-family: var(--font-brand);
+  text-transform: uppercase; letter-spacing: 0.22em;
+  font-size: 0.72rem; color: var(--p57-cyan, #25c6e6);
+  margin-bottom: 0.4rem; font-weight: 700;
+}
+
+.doc-body .pullquote {
+  font-family: var(--font-display); font-size: 1.6rem; line-height: 1.3;
+  color: var(--p57-navy, #0a2342); border: none;
+  padding: 1.2rem 1.5rem; margin: 1.5rem 0;
+  border-top: 2px solid var(--p57-cyan, #25c6e6);
+  border-bottom: 2px solid var(--p57-cyan, #25c6e6);
+  text-align: center; font-style: italic;
+}
+
+/* Dark theme adjustments for premium elements */
+.theme-p57-noir .doc-body ul > li::before { background: var(--p57-cyan); box-shadow: 0 0 0 3px rgba(37,198,230,0.18); }
+.theme-p57-noir .doc-body ol > li::before { background: rgba(37,198,230,0.15); color: var(--p57-cyan); }
+.theme-p57-noir .doc-body table { box-shadow: none; }
+.theme-p57-noir .doc-body thead th { background: #112c4f; color: #fff; border-bottom-color: var(--p57-cyan); }
+.theme-p57-noir .doc-body tbody tr:nth-child(even) td { background: #0e2746; }
+.theme-p57-noir .doc-body tbody tr:hover td { background: #143562; }
+.theme-p57-noir .doc-body td { border-bottom-color: #1d3a63; }
+.theme-p57-noir .doc-body blockquote { background: linear-gradient(180deg, #112c4f, #0a2342); color: #e8f4fa; }
+.theme-p57-noir .doc-body hr::after { background: #0a2342; }
+.theme-p57-noir .doc-body .card { background: #112c4f; border-color: #1d3a63; }
+.theme-p57-noir .doc-body .stat { background: #112c4f; border-color: #1d3a63; }
+.theme-p57-noir .doc-body .stat .value { color: #fff; }
+.theme-noir .doc-body hr::after { background: #161616; }
