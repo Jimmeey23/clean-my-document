@@ -12,7 +12,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { DocPreview } from "@/components/DocPreview";
 import { ExportMenu } from "@/components/ExportMenu";
 import { cleanText } from "@/utils/clean.functions";
-import { THEMES, DEFAULT_THEME, type ThemeId } from "@/lib/themes";
+import { THEMES, DEFAULT_THEME, DOC_TYPES, type ThemeId } from "@/lib/themes";
+import logo from "@/assets/physique57-logo.png";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -24,17 +25,8 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const STYLES = [
-  { id: "auto", label: "Auto" },
-  { id: "report", label: "Report" },
-  { id: "article", label: "Article" },
-  { id: "memo", label: "Memo" },
-  { id: "academic", label: "Academic" },
-  { id: "minimal", label: "Minimal" },
-] as const;
-
-const TONES = ["Neutral", "Professional", "Friendly", "Persuasive", "Concise"] as const;
-const LENGTHS = ["Auto", "Brief", "Standard", "Detailed"] as const;
+const TONES = ["Neutral", "Professional", "Friendly", "Persuasive", "Concise", "Authoritative"] as const;
+const LENGTHS = ["Auto", "Brief", "Standard", "Detailed", "Exhaustive"] as const;
 
 const SAMPLE = `quarterly review q3 - revenue grew 18% YoY hitting $4.2M, big driver was enterprise tier (up 31%). churn ticked up to 4.1% mostly in starter cohort. team shipped 14 features incl. SSO, audit logs, and the new analytics dashboard. hiring: closed 3 senior eng roles, 1 PM, 2 designers. risks: AWS cost up 22%, need to address. plans for q4: launch ai assistant, expand EU presence, ship mobile beta. customer NPS up to 52 from 47.`;
 
