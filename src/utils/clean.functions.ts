@@ -3,7 +3,8 @@ import { z } from "zod";
 
 const inputSchema = z.object({
   text: z.string().min(1).max(200000),
-  style: z.enum(["report", "article", "memo", "academic", "minimal"]).default("report"),
+  style: z.string().default("report"),
+  docTypeHint: z.string().optional(),
 });
 
 const SYSTEM_PROMPT = `You are an expert document editor and typesetter. Transform raw, messy, unstructured text into a beautifully formatted, well-structured document in GitHub-Flavored Markdown.
@@ -32,7 +33,10 @@ export const cleanText = createServerFn({ method: "POST" })
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
 
-    const styleHint = `Preferred style: ${data.style}.`;
+    const styleHint = [
+      `Preferred style: ${data.style}.`,
+      data.docTypeHint ? `Document type guidance: ${data.docTypeHint}` : "",
+    ].filter(Boolean).join("\n");
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
