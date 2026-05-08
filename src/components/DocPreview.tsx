@@ -7,19 +7,24 @@ import { THEMES } from "@/lib/themes";
 import logo from "@/assets/physique57-logo.png";
 
 marked.setOptions({ gfm: true, breaks: false });
-// Custom renderer: render fenced ```mermaid blocks as a styled diagram block (preview).
-const renderer = new marked.Renderer();
-const origCode = renderer.code.bind(renderer);
-renderer.code = (code: any, infostring?: string) => {
-  const lang = (typeof code === "object" ? code.lang : infostring) ?? "";
-  const text = typeof code === "object" ? code.text : code;
-  if (String(lang).toLowerCase() === "mermaid") {
-    const escaped = String(text).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" } as any)[c]);
-    return `<div class="mermaid-block">${escaped}</div>`;
-  }
-  return origCode(code as any, infostring as any);
-};
-marked.use({ renderer });
+// Render fenced ```mermaid blocks as a styled diagram block (preview-only).
+marked.use({
+  extensions: [
+    {
+      name: "mermaidBlock",
+      level: "block",
+      start(src: string) { return src.indexOf("```mermaid"); },
+      tokenizer(src: string) {
+        const m = /^```mermaid\n([\s\S]*?)\n```/.exec(src);
+        if (m) return { type: "mermaidBlock", raw: m[0], text: m[1] } as any;
+      },
+      renderer(token: any) {
+        const escaped = String(token.text).replace(/[&<>]/g, (c: string) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" } as any)[c]);
+        return `<div class="mermaid-block">${escaped}</div>`;
+      },
+    },
+  ],
+});
 
 const td = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", bulletListMarker: "-" });
 td.keep(["table", "thead", "tbody", "tr", "th", "td"]);
