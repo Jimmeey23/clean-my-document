@@ -195,7 +195,6 @@ function Home() {
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--p57-cyan)" }} />
             16 document types · 9 themes · editable · 11 exports
           </div>
-          </div>
           <h1 className="display text-5xl font-semibold leading-[1.05] sm:text-7xl">
             Raw text in. <span className="gold-text italic">Beautiful documents</span> out.
           </h1>
