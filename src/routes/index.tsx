@@ -12,7 +12,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { DocPreview } from "@/components/DocPreview";
 import { ExportMenu } from "@/components/ExportMenu";
 import { cleanText } from "@/utils/clean.functions";
-import { THEMES, DEFAULT_THEME, type ThemeId } from "@/lib/themes";
+import { THEMES, DEFAULT_THEME, DOC_TYPES, type ThemeId } from "@/lib/themes";
+import logo from "@/assets/physique57-logo.png";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -24,17 +25,8 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const STYLES = [
-  { id: "auto", label: "Auto" },
-  { id: "report", label: "Report" },
-  { id: "article", label: "Article" },
-  { id: "memo", label: "Memo" },
-  { id: "academic", label: "Academic" },
-  { id: "minimal", label: "Minimal" },
-] as const;
-
-const TONES = ["Neutral", "Professional", "Friendly", "Persuasive", "Concise"] as const;
-const LENGTHS = ["Auto", "Brief", "Standard", "Detailed"] as const;
+const TONES = ["Neutral", "Professional", "Friendly", "Persuasive", "Concise", "Authoritative"] as const;
+const LENGTHS = ["Auto", "Brief", "Standard", "Detailed", "Exhaustive"] as const;
 
 const SAMPLE = `quarterly review q3 - revenue grew 18% YoY hitting $4.2M, big driver was enterprise tier (up 31%). churn ticked up to 4.1% mostly in starter cohort. team shipped 14 features incl. SSO, audit logs, and the new analytics dashboard. hiring: closed 3 senior eng roles, 1 PM, 2 designers. risks: AWS cost up 22%, need to address. plans for q4: launch ai assistant, expand EU presence, ship mobile beta. customer NPS up to 52 from 47.`;
 
@@ -49,7 +41,7 @@ function Home() {
   const [history, setHistory] = useState<string[]>([]);
   const [future, setFuture] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [style, setStyle] = useState<(typeof STYLES)[number]["id"]>("auto");
+  const [docType, setDocType] = useState<string>("auto");
   const [tone, setTone] = useState<typeof TONES[number]>("Professional");
   const [length, setLength] = useState<typeof LENGTHS[number]>("Auto");
   const [themeId, setThemeId] = useState<ThemeId>(DEFAULT_THEME);
@@ -71,19 +63,26 @@ function Home() {
     if (!input.trim()) { toast.error("Paste some text first"); return; }
     setLoading(true);
     try {
+      const dt = DOC_TYPES.find((d) => d.id === docType);
       const directives = [
-        style !== "auto" && `Preferred style: ${style}.`,
+        docType !== "auto" && `Document type: ${dt?.label}.`,
         `Tone: ${tone}.`,
         length !== "Auto" && `Length: ${length}.`,
         extra,
       ].filter(Boolean).join(" ");
-      const res = await cleanText({ data: { text: `${directives}\n\n${input.trim()}`, style: style === "auto" ? "report" : style } });
+      const res = await cleanText({
+        data: {
+          text: `${directives}\n\n${input.trim()}`,
+          style: docType === "auto" ? "report" : docType,
+          docTypeHint: dt?.hint,
+        },
+      });
       setOutputTracked(res.markdown);
       toast.success("Document refined");
     } catch (e: any) {
       toast.error(e?.message ?? "Failed to refine");
     } finally { setLoading(false); }
-  }, [input, style, tone, length, setOutputTracked]);
+  }, [input, docType, tone, length, setOutputTracked]);
 
   const handlePaste = async () => {
     try {
@@ -175,12 +174,14 @@ function Home() {
         <div className="absolute inset-0" style={{ background: "var(--gradient-radial)" }} />
         <div className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-glow)]">
-              <Sparkles className="h-5 w-5" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white p-1.5 shadow-[var(--shadow-glow)]">
+              <img src={logo} alt="Physique 57 India" className="h-full w-full object-contain" />
             </div>
             <div>
-              <div className="display text-xl font-semibold tracking-tight">Lumen</div>
-              <div className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">document refinery</div>
+              <div className="text-xl font-bold tracking-[0.04em] text-foreground" style={{ fontFamily: '"Play", sans-serif' }}>
+                PHYSIQUE 57 <span style={{ color: "var(--p57-cyan)" }}>· LUMEN</span>
+              </div>
+              <div className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">brand document refinery</div>
             </div>
           </div>
           <a href="#workspace" className="hidden text-sm text-muted-foreground hover:text-foreground sm:block">Skip to editor ↓</a>
@@ -191,8 +192,8 @@ function Home() {
       <section className="relative mx-auto max-w-5xl px-6 pb-10 pt-12 text-center sm:pt-20">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs uppercase tracking-widest text-muted-foreground backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            6 themes · editable preview · 11 export formats
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--p57-cyan)" }} />
+            16 document types · 9 themes · editable · 11 exports
           </div>
           <h1 className="display text-5xl font-semibold leading-[1.05] sm:text-7xl">
             Raw text in. <span className="gold-text italic">Beautiful documents</span> out.
@@ -241,10 +242,16 @@ function Home() {
 
             {/* Controls */}
             <div className="mt-4 space-y-3">
-              <ControlRow label="Style">
-                {STYLES.map((s) => (
-                  <Chip key={s.id} active={style === s.id} onClick={() => setStyle(s.id)}>{s.label}</Chip>
-                ))}
+              <ControlRow label="Type">
+                <select
+                  value={docType}
+                  onChange={(e) => setDocType(e.target.value)}
+                  className="rounded-lg border border-border bg-background/60 px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none"
+                >
+                  {DOC_TYPES.map((d) => (
+                    <option key={d.id} value={d.id}>{d.label}</option>
+                  ))}
+                </select>
               </ControlRow>
               <ControlRow label="Tone">
                 {TONES.map((t) => (

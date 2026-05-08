@@ -5,9 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: "Fraunces", "Cormorant Garamond", "Times New Roman", serif;
+  --font-display: "Playfair Display", "Fraunces", "Cormorant Garamond", serif;
   --font-sans: "Inter", "Söhne", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-brand: "Play", "Inter", sans-serif;
+  --font-script: "Reey", "Playfair Display", cursive;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -42,42 +44,47 @@
 :root {
   --radius: 0.75rem;
 
-  /* Editorial dark theme - "ink & gold" */
-  --background: oklch(0.16 0.012 60);
-  --foreground: oklch(0.94 0.015 80);
-  --ink: oklch(0.12 0.01 60);
-  --paper: oklch(0.97 0.012 85);
+  /* Physique 57 brand: navy ink + cyan accent on dark editorial canvas */
+  --background: oklch(0.16 0.03 250);
+  --foreground: oklch(0.95 0.01 240);
+  --ink: oklch(0.20 0.06 260);     /* Physique navy */
+  --paper: oklch(0.98 0.005 240);
 
-  --card: oklch(0.20 0.013 65);
-  --card-foreground: oklch(0.95 0.012 80);
+  --card: oklch(0.20 0.035 255);
+  --card-foreground: oklch(0.95 0.01 240);
 
-  --popover: oklch(0.18 0.012 65);
-  --popover-foreground: oklch(0.95 0.012 80);
+  --popover: oklch(0.18 0.03 255);
+  --popover-foreground: oklch(0.95 0.01 240);
 
-  --primary: oklch(0.78 0.13 75);   /* warm gold */
-  --primary-foreground: oklch(0.18 0.012 60);
-  --gold: oklch(0.82 0.14 80);
+  --primary: oklch(0.78 0.16 230);   /* Physique cyan */
+  --primary-foreground: oklch(0.18 0.05 260);
+  --gold: oklch(0.78 0.16 230);
 
-  --secondary: oklch(0.26 0.014 65);
-  --secondary-foreground: oklch(0.94 0.015 80);
+  --secondary: oklch(0.26 0.03 255);
+  --secondary-foreground: oklch(0.94 0.015 240);
 
-  --muted: oklch(0.24 0.013 65);
-  --muted-foreground: oklch(0.68 0.018 75);
+  --muted: oklch(0.24 0.025 255);
+  --muted-foreground: oklch(0.70 0.02 240);
 
-  --accent: oklch(0.45 0.10 50);    /* burnt amber */
-  --accent-foreground: oklch(0.97 0.015 85);
+  --accent: oklch(0.55 0.18 240);
+  --accent-foreground: oklch(0.97 0.01 240);
 
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.98 0.005 80);
 
-  --border: oklch(0.30 0.012 65);
-  --input: oklch(0.26 0.012 65);
-  --ring: oklch(0.78 0.13 75);
+  --border: oklch(0.30 0.025 255);
+  --input: oklch(0.26 0.025 255);
+  --ring: oklch(0.78 0.16 230);
 
-  --gradient-gold: linear-gradient(135deg, oklch(0.82 0.14 80), oklch(0.62 0.15 55));
-  --gradient-radial: radial-gradient(circle at 30% 20%, oklch(0.30 0.06 70 / 0.6), transparent 60%);
+  --gradient-gold: linear-gradient(135deg, oklch(0.85 0.16 225), oklch(0.55 0.18 250));
+  --gradient-radial: radial-gradient(circle at 30% 20%, oklch(0.40 0.10 240 / 0.55), transparent 60%);
   --shadow-elegant: 0 30px 80px -30px oklch(0 0 0 / 0.6), 0 8px 24px -12px oklch(0 0 0 / 0.4);
-  --shadow-glow: 0 0 60px -10px oklch(0.78 0.13 75 / 0.45);
+  --shadow-glow: 0 0 60px -10px oklch(0.78 0.16 230 / 0.45);
+
+  /* Brand tokens */
+  --p57-navy: #0a2342;
+  --p57-cyan: #25c6e6;
+  --p57-cyan-soft: #b9eef8;
 }
 
 @layer base {
@@ -93,8 +100,8 @@
   h1, h2, h3, .display { font-family: var(--font-display); letter-spacing: -0.02em; }
 }
 
-/* Imported web fonts */
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+/* Imported web fonts (added Playfair Display + Play; Reey isn't on Google Fonts so it falls back to Playfair) */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Play:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Serif+Display&display=swap");
 
 /* Document preview - shared sheet */
 .doc-sheet {
@@ -196,4 +203,111 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* === Brand header/footer (Physique 57) === */
+.doc-sheet .doc-header.brand-p57 {
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbfd 100%);
+  border-bottom: 2px solid var(--p57-cyan);
+  padding: 1.1rem 2.25rem;
+}
+.doc-sheet .doc-header.brand-p57 .brand { gap: 0.75rem; }
+.doc-sheet .doc-header.brand-p57 .brand img { height: 38px; }
+.doc-sheet .doc-header.brand-p57 .brand .name {
+  font-family: "Play", "Inter", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--p57-navy);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+.doc-sheet .doc-header.brand-p57 .meta { color: var(--p57-navy); opacity: 0.7; font-weight: 500; }
+.doc-sheet .doc-footer.brand-p57 {
+  background: var(--p57-navy);
+  color: #cfe9f3;
+  border-top: 2px solid var(--p57-cyan);
+  font-family: "Play", "Inter", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.doc-sheet .doc-footer.brand-p57 .accent { color: var(--p57-cyan); font-weight: 700; }
+
+/* === Theme: P57 Modern === */
+.theme-p57-modern { font-family: "Inter", system-ui, sans-serif; color: #0a2342; }
+.theme-p57-modern .doc-body h1 { font-family: "Play", "Inter", sans-serif; color: var(--p57-navy); border-bottom: 2px solid var(--p57-cyan); padding-bottom: 0.6rem; letter-spacing: -0.01em; }
+.theme-p57-modern .doc-body h2 { color: var(--p57-navy); }
+.theme-p57-modern .doc-body h2::before { content: ""; display: inline-block; width: 18px; height: 3px; background: var(--p57-cyan); vertical-align: middle; margin-right: 0.7rem; transform: translateY(-4px); border-radius: 2px; }
+.theme-p57-modern .doc-body h3 { color: var(--p57-navy); }
+.theme-p57-modern .doc-body a { color: var(--p57-navy); border-bottom: 1px solid var(--p57-cyan); text-decoration: none; }
+.theme-p57-modern .doc-body th { background: var(--p57-cyan-soft); color: var(--p57-navy); }
+.theme-p57-modern .doc-body blockquote { border-left-color: var(--p57-cyan); background: #f1fafd; color: #0a2342; }
+.theme-p57-modern .doc-body strong { color: var(--p57-navy); }
+.theme-p57-modern .doc-body ul li::marker { color: var(--p57-cyan); }
+
+/* === Theme: P57 Editorial === */
+.theme-p57-editorial { font-family: "Playfair Display", "Fraunces", serif; background: #fbfaf6; color: #0a2342; }
+.theme-p57-editorial .doc-body h1 { font-family: "Playfair Display", serif; font-weight: 900; color: var(--p57-navy); border-bottom: 1px solid var(--p57-cyan); padding-bottom: 0.5rem; }
+.theme-p57-editorial .doc-body h2 { font-family: "Playfair Display", serif; color: var(--p57-navy); font-style: italic; font-weight: 700; }
+.theme-p57-editorial .doc-body h3 { font-family: "Play", sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.95rem; color: #1a4d8c; }
+.theme-p57-editorial .doc-body blockquote { background: #eef9fc; border-left-color: var(--p57-cyan); }
+.theme-p57-editorial .doc-body th { background: #eef9fc; color: var(--p57-navy); }
+
+/* === Theme: P57 Noir === */
+.theme-p57-noir { background: #0a2342; color: #e8f4fa; }
+.theme-p57-noir .doc-body { color: #e8f4fa; }
+.theme-p57-noir .doc-body h1 { font-family: "Play", sans-serif; color: #fff; border-bottom: 2px solid var(--p57-cyan); padding-bottom: 0.5rem; }
+.theme-p57-noir .doc-body h2 { color: var(--p57-cyan); }
+.theme-p57-noir .doc-body h3 { color: #b9eef8; }
+.theme-p57-noir .doc-body code { background: #112c4f; color: var(--p57-cyan); }
+.theme-p57-noir .doc-body blockquote { background: #112c4f; color: #e8f4fa; border-left-color: var(--p57-cyan); }
+.theme-p57-noir .doc-body th { background: #112c4f; color: #fff; }
+.theme-p57-noir .doc-body th, .theme-p57-noir .doc-body td { border-color: #1d3a63; }
+.theme-p57-noir .doc-body a { color: var(--p57-cyan); }
+.theme-p57-noir .doc-header, .theme-p57-noir .doc-footer { background: #061a32; border-color: #112c4f; color: #b9eef8; }
+.theme-p57-noir .doc-header.brand-p57 { background: #061a32; border-bottom-color: var(--p57-cyan); }
+.theme-p57-noir .doc-header.brand-p57 .brand .name { color: #fff; }
+.theme-p57-noir .doc-header.brand-p57 .meta { color: var(--p57-cyan); opacity: 0.9; }
+.theme-p57-noir .doc-footer.brand-p57 { background: #061a32; color: #b9eef8; }
+
+/* === Theme: Magazine === */
+.theme-magazine { font-family: "Cormorant Garamond", "Playfair Display", serif; color: #161616; background: #fff; }
+.theme-magazine .doc-body h1 { font-family: "Playfair Display", serif; font-weight: 900; font-size: 3rem; line-height: 1.05; letter-spacing: -0.03em; }
+.theme-magazine .doc-body h2 { font-family: "Playfair Display", serif; font-weight: 700; font-style: italic; }
+.theme-magazine .doc-body h3 { font-family: "Play", sans-serif; text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.8rem; color: #888; }
+.theme-magazine .doc-body > p:first-of-type::first-letter {
+  font-family: "Playfair Display", serif; font-weight: 900; float: left; font-size: 4.2rem; line-height: 0.9;
+  padding: 0.4rem 0.6rem 0 0; color: #111;
+}
+.theme-magazine .doc-body p { font-size: 1.08rem; }
+
+/* === Theme: Academic === */
+.theme-academic { font-family: "Cormorant Garamond", "Times New Roman", serif; color: #1a1a1a; background: #fff; counter-reset: section; }
+.theme-academic .doc-body h1 { text-align: center; font-family: "Playfair Display", serif; font-weight: 700; }
+.theme-academic .doc-body h2 { counter-increment: section; counter-reset: subsection; font-size: 1.2rem; }
+.theme-academic .doc-body h2::before { content: counter(section) ". "; color: #555; font-weight: 700; margin-right: 0.4rem; }
+.theme-academic .doc-body h3 { counter-increment: subsection; font-size: 1.02rem; }
+.theme-academic .doc-body h3::before { content: counter(section) "." counter(subsection) " "; color: #777; margin-right: 0.4rem; }
+.theme-academic .doc-body p { text-align: justify; text-indent: 1.4rem; hyphens: auto; }
+
+/* === Theme: Playful === */
+.theme-playful { font-family: "Play", "Inter", sans-serif; color: #1a1830; background: #fffaf3; }
+.theme-playful .doc-body h1 { color: #ff6b6b; font-weight: 700; font-size: 2.4rem; }
+.theme-playful .doc-body h2 { color: #4ecdc4; }
+.theme-playful .doc-body h3 { color: #ffa94d; }
+.theme-playful .doc-body blockquote { background: #fff3e0; border-left-color: #ffa94d; border-radius: 8px; }
+.theme-playful .doc-body th { background: #ffe9c8; }
+.theme-playful .doc-body code { background: #ffe9c8; color: #c0392b; }
+
+/* === Mermaid container styling === */
+.doc-body .mermaid-block {
+  background: #f8fbfd; border: 1px solid #e2eef5; border-radius: 8px;
+  padding: 1rem; margin: 1.2rem 0; font-family: var(--font-mono); font-size: 0.85rem;
+  white-space: pre-wrap; color: #0a2342; overflow-x: auto;
+}
+.theme-p57-noir .doc-body .mermaid-block { background: #112c4f; border-color: #1d3a63; color: #b9eef8; }
+.doc-body .mermaid-block::before {
+  content: "◇ Diagram";
+  display: block; font-family: var(--font-sans); font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: 0.15em; color: #25c6e6; margin-bottom: 0.5rem; font-weight: 700;
 }
