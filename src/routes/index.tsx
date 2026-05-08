@@ -41,7 +41,7 @@ function Home() {
   const [history, setHistory] = useState<string[]>([]);
   const [future, setFuture] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [style, setStyle] = useState<(typeof STYLES)[number]["id"]>("auto");
+  const [docType, setDocType] = useState<string>("auto");
   const [tone, setTone] = useState<typeof TONES[number]>("Professional");
   const [length, setLength] = useState<typeof LENGTHS[number]>("Auto");
   const [themeId, setThemeId] = useState<ThemeId>(DEFAULT_THEME);
@@ -63,19 +63,26 @@ function Home() {
     if (!input.trim()) { toast.error("Paste some text first"); return; }
     setLoading(true);
     try {
+      const dt = DOC_TYPES.find((d) => d.id === docType);
       const directives = [
-        style !== "auto" && `Preferred style: ${style}.`,
+        docType !== "auto" && `Document type: ${dt?.label}.`,
         `Tone: ${tone}.`,
         length !== "Auto" && `Length: ${length}.`,
         extra,
       ].filter(Boolean).join(" ");
-      const res = await cleanText({ data: { text: `${directives}\n\n${input.trim()}`, style: style === "auto" ? "report" : style } });
+      const res = await cleanText({
+        data: {
+          text: `${directives}\n\n${input.trim()}`,
+          style: docType === "auto" ? "report" : docType,
+          docTypeHint: dt?.hint,
+        },
+      });
       setOutputTracked(res.markdown);
       toast.success("Document refined");
     } catch (e: any) {
       toast.error(e?.message ?? "Failed to refine");
     } finally { setLoading(false); }
-  }, [input, style, tone, length, setOutputTracked]);
+  }, [input, docType, tone, length, setOutputTracked]);
 
   const handlePaste = async () => {
     try {
