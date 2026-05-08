@@ -174,12 +174,14 @@ function Home() {
         <div className="absolute inset-0" style={{ background: "var(--gradient-radial)" }} />
         <div className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-glow)]">
-              <Sparkles className="h-5 w-5" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white p-1.5 shadow-[var(--shadow-glow)]">
+              <img src={logo} alt="Physique 57 India" className="h-full w-full object-contain" />
             </div>
             <div>
-              <div className="display text-xl font-semibold tracking-tight">Lumen</div>
-              <div className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">document refinery</div>
+              <div className="text-xl font-bold tracking-[0.04em] text-foreground" style={{ fontFamily: '"Play", sans-serif' }}>
+                PHYSIQUE 57 <span style={{ color: "var(--p57-cyan)" }}>· LUMEN</span>
+              </div>
+              <div className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">brand document refinery</div>
             </div>
           </div>
           <a href="#workspace" className="hidden text-sm text-muted-foreground hover:text-foreground sm:block">Skip to editor ↓</a>
@@ -190,8 +192,9 @@ function Home() {
       <section className="relative mx-auto max-w-5xl px-6 pb-10 pt-12 text-center sm:pt-20">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs uppercase tracking-widest text-muted-foreground backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            6 themes · editable preview · 11 export formats
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--p57-cyan)" }} />
+            16 document types · 9 themes · editable · 11 exports
+          </div>
           </div>
           <h1 className="display text-5xl font-semibold leading-[1.05] sm:text-7xl">
             Raw text in. <span className="gold-text italic">Beautiful documents</span> out.
