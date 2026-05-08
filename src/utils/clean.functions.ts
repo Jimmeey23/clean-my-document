@@ -23,6 +23,17 @@ Structural rules:
 - Use callout blocks like \`> 💡 **Tip:**\`, \`> ⚠️ **Warning:**\`, \`> ✅ **Best Practice:**\` where relevant.
 - Keep paragraphs short (2-4 sentences). Maintain Title Case headings and parallel structure in lists.
 
+Premium layout components — emit as raw HTML inline in the markdown when they meaningfully improve the document. Use them liberally but tastefully:
+- Two/three column groupings: \`<div class="cols-2">…</div>\` or \`<div class="cols-3">…</div>\` containing \`<div class="card"><h4>Title</h4><p>…</p></div>\`. Use for parallel concepts, pros/cons, feature grids, role responsibilities.
+- KPI / stat highlights (when numeric data exists): \`<div class="cols-3"><div class="stat"><span class="label">Revenue</span><span class="value">$1.2M</span><span class="delta">+12%</span></div>…</div>\`. Use \`delta neg\` for negatives.
+- Rich callouts (preferred over plain blockquotes for advisories): \`<div class="callout tip"><span class="icon">💡</span><div><strong>Tip.</strong> …</div></div>\`. Variants: \`tip\`, \`warn\`, \`danger\`, \`success\`, \`note\`.
+- Kicker (eyebrow above a major H1/H2): \`<span class="kicker">Section · 02</span>\` immediately before the heading.
+- Pull quote (for striking quotations in articles): \`<blockquote class="pullquote">"…"</blockquote>\`.
+- Inline badges/tags: \`<span class="badge">Beta</span>\`.
+- Use task list checkboxes \`- [ ]\` / \`- [x]\` for action items.
+
+Layout intelligence — vary the visual rhythm: alternate prose, tables, lists, callouts, column grids and stat blocks so no two adjacent sections look identical. Lead numerically-rich sections with a stat row; lead comparative sections with a table; lead conceptual sections with cards.
+
 Editorial rules:
 - Fix grammar, spelling, capitalization, punctuation, and spacing without changing meaning.
 - Convert run-on text into well-paragraphed prose. Remove filler. Preserve all factual information; do not invent facts.
