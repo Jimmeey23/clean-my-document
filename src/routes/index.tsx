@@ -6,7 +6,7 @@ import {
   Pencil, Eye, Copy, Undo2, Redo2, Bold, Italic, List, ListOrdered, Quote,
   Heading1, Heading2, Heading3, Table as TableIcon, Minus, Code2, Palette, Check,
   Settings2, Ruler, ImageIcon, Type, Maximize2, Minimize2, Hash, Square, AlignLeft,
-  CheckSquare, Lightbulb, AlertTriangle, FlaskConical, Maximize,
+  CheckSquare, Lightbulb, AlertTriangle, FlaskConical,
 } from "lucide-react";
 import { toast } from "sonner";
 import mammoth from "mammoth";
