@@ -165,19 +165,13 @@ export const DEFAULT_PAGE: PageConfig = {
   showHeader: true,
   showFooter: true,
   headerText: "",
-  footerLeft: "",
-  footerRight: "",
+  footerLeft: "PROPERTY OF PHYSIQUE 57 INDIA",
+  footerRight: "STANDARD OFFER LETTER 2026",
   showLogo: true,
   showPageNumbers: true,
   bodyFont: "",
   bodyScale: 1,
-  footerLeft: "",
-  footerRight: "",
-  headerText: "",
 };
-// override defaults set above (kept above for type completeness)
-DEFAULT_PAGE.footerLeft = "PROPERTY OF PHYSIQUE 57 INDIA";
-DEFAULT_PAGE.footerRight = "STANDARD OFFER LETTER 2026";
 
 export const BODY_FONTS: { id: string; label: string; value: string }[] = [
   { id: "default",   label: "Theme default", value: "" },
