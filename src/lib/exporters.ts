@@ -117,7 +117,8 @@ function extractTitle(md: string): string {
 }
 
 // ---- PDF ----
-function exportPdf(md: string, title: string) {
+function exportPdf(rawMd: string, title: string) {
+  const md = flattenHtml(rawMd);
   const doc = new jsPDF({ unit: "pt", format: "letter" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -186,7 +187,8 @@ function exportPdf(md: string, title: string) {
 }
 
 // ---- DOCX ----
-async function exportDocx(md: string, title: string) {
+async function exportDocx(rawMd: string, title: string) {
+  const md = flattenHtml(rawMd);
   const children: Paragraph[] = [];
   const lines = md.split("\n");
   let inCode = false; let codeBuf: string[] = [];
@@ -223,7 +225,8 @@ async function exportDocx(md: string, title: string) {
   saveAs(blob, `${title}.docx`);
 }
 
-function mdToRtf(md: string): string {
+function mdToRtf(rawMd: string): string {
+  const md = flattenHtml(rawMd);
   const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/\{/g, "\\{").replace(/\}/g, "\\}");
   const parts: string[] = [];
   for (const line of md.split("\n")) {
@@ -238,7 +241,8 @@ function mdToRtf(md: string): string {
   return `{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Georgia;}}\\fs22\n${parts.join("\n")}\n}`;
 }
 
-function mdToLatex(md: string): string {
+function mdToLatex(rawMd: string): string {
+  const md = flattenHtml(rawMd);
   const esc = (s: string) => s.replace(/([&%$#_{}])/g, "\\$1").replace(/~/g, "\\textasciitilde{}").replace(/\^/g, "\\textasciicircum{}");
   const out: string[] = ["\\documentclass[11pt]{article}", "\\usepackage[utf8]{inputenc}", "\\usepackage{geometry}", "\\geometry{margin=1in}", "\\usepackage{hyperref}", "\\begin{document}"];
   let inList = false;
@@ -255,7 +259,8 @@ function mdToLatex(md: string): string {
 }
 
 type Node = { type: string; level?: number; text?: string; children?: Node[] };
-function mdToTree(md: string): Node[] {
+function mdToTree(rawMd: string): Node[] {
+  const md = flattenHtml(rawMd);
   const nodes: Node[] = [];
   const lines = md.split("\n");
   let i = 0;
