@@ -234,6 +234,43 @@
 }
 .doc-sheet .doc-footer.brand-p57 .accent { color: var(--p57-cyan); font-weight: 700; }
 
+/* === Theme: P57 Standard (default — JD-style formal document) === */
+.theme-p57-standard { font-family: "Inter", system-ui, sans-serif; color: #111; background: #fff; }
+.theme-p57-standard .doc-body { font-size: 0.95rem; line-height: 1.65; color: #1a1a1a; }
+.theme-p57-standard .doc-body h1 {
+  font-family: "Play", "Inter", sans-serif;
+  font-weight: 800; font-size: 2.1rem; letter-spacing: 0.18em;
+  text-transform: uppercase; text-align: center;
+  color: var(--p57-navy);
+  border-bottom: 2px solid var(--p57-navy);
+  padding-bottom: 0.7rem; margin-bottom: 1.5rem;
+}
+.theme-p57-standard .doc-body h2 {
+  font-family: "Play", "Inter", sans-serif;
+  font-weight: 700; font-size: 1.05rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--p57-navy);
+  margin-top: 2rem; margin-bottom: 0.6rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid #d4dbe5;
+}
+.theme-p57-standard .doc-body h3 {
+  font-family: "Play", "Inter", sans-serif;
+  font-weight: 700; font-size: 0.92rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--p57-navy);
+  margin-top: 1.3rem; margin-bottom: 0.5rem;
+}
+.theme-p57-standard .doc-body p { margin: 0.6rem 0; }
+.theme-p57-standard .doc-body strong { color: var(--p57-navy); font-weight: 700; }
+.theme-p57-standard .doc-body ul { padding-left: 1.4rem; }
+.theme-p57-standard .doc-body ul li { margin: 0.32rem 0; }
+.theme-p57-standard .doc-body ul li::marker { color: var(--p57-navy); }
+.theme-p57-standard .doc-body ol li::marker { color: var(--p57-navy); font-weight: 700; }
+.theme-p57-standard .doc-body th { background: #f1f4f8; color: var(--p57-navy); border-bottom: 2px solid var(--p57-navy); }
+.theme-p57-standard .doc-body td { border-bottom: 1px solid #e6eaf0; }
+.theme-p57-standard .doc-body blockquote { border-left: 3px solid var(--p57-navy); background: #f7f9fc; color: #1a1a1a; }
+.theme-p57-standard .doc-body a { color: var(--p57-navy); border-bottom: 1px solid var(--p57-cyan); text-decoration: none; }
+.theme-p57-standard .doc-body hr { border: 0; border-top: 1px solid #d4dbe5; margin: 1.5rem 0; }
+
 /* === Theme: P57 Modern === */
 .theme-p57-modern { font-family: "Inter", system-ui, sans-serif; color: #0a2342; }
 .theme-p57-modern .doc-body h1 { font-family: "Play", "Inter", sans-serif; color: var(--p57-navy); border-bottom: 2px solid var(--p57-cyan); padding-bottom: 0.6rem; letter-spacing: -0.01em; }
