@@ -423,7 +423,6 @@ function Home() {
                 <IconBtn onClick={toggleFullscreen} title="Toggle full screen"><Expand className="h-3.5 w-3.5" /></IconBtn>
               </div>
               <DocPreview markdown={output} themeId={themeId} editable={editable} title={title} page={page} zoom={zoom} onChange={setOutputTracked} />
-            </div>
           </div>
         </div>
       </section>
