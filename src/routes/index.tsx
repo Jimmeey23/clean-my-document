@@ -55,7 +55,19 @@ function Home() {
   const [page, setPage] = useState<PageConfig>(DEFAULT_PAGE);
   const [showPagePanel, setShowPagePanel] = useState(false);
   const [zenMode, setZenMode] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const previewWrapRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const toggleFullscreen = async () => {
+    const el = previewWrapRef.current;
+    if (!el) return;
+    if (!document.fullscreenElement) {
+      try { await el.requestFullscreen(); } catch { /* ignore */ }
+    } else {
+      try { await document.exitFullscreen(); } catch { /* ignore */ }
+    }
+  };
 
   const title = useMemo(() => extractTitle(output), [output]);
   const updatePage = (patch: Partial<PageConfig>) => setPage((p) => ({ ...p, ...patch }));
