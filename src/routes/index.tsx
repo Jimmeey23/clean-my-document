@@ -242,18 +242,28 @@ function Home() {
         </section>
       )}
 
-      <section id="workspace" className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
-          {/* INPUT PANEL */}
-          {!zenMode && (
-            <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-[var(--shadow-elegant)] backdrop-blur">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <FileText className="h-4 w-4 text-primary" />
-                  <span>Source</span>
-                  <span className="text-xs text-muted-foreground">{input.length.toLocaleString()} chars · {input.split(/\s+/).filter(Boolean).length} words</span>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
+      <section id="workspace" className="mx-auto w-full max-w-[1600px] px-3 pb-24 sm:px-6">
+        {/* Collapsible source drawer above the full-width preview */}
+        {!zenMode && (
+          <div className="mb-4 rounded-2xl border border-border bg-card/60 shadow-[var(--shadow-elegant)] backdrop-blur">
+            <button
+              onClick={() => setShowSource((v) => !v)}
+              className="flex w-full items-center justify-between gap-3 rounded-2xl px-5 py-3 text-left text-sm font-medium hover:bg-muted/40"
+            >
+              <span className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" />
+                Source text
+                <span className="text-xs text-muted-foreground">{input.length.toLocaleString()} chars · {input.split(/\s+/).filter(Boolean).length} words</span>
+              </span>
+              <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                {showSource ? "Hide" : "Show"}
+                {showSource ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+              </span>
+            </button>
+
+            {showSource && (
+              <div className="border-t border-border p-5">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
                   <SmallBtn onClick={handlePaste} icon={<ClipboardPaste className="h-3.5 w-3.5" />}>Paste</SmallBtn>
                   <SmallBtn onClick={() => fileRef.current?.click()} icon={<Upload className="h-3.5 w-3.5" />}>Upload</SmallBtn>
                   <input ref={fileRef} type="file" accept=".txt,.md,.markdown,.docx,.text,.rtf" className="hidden"
@@ -261,72 +271,62 @@ function Home() {
                   <SmallBtn onClick={() => setInput(SAMPLE)}>Sample</SmallBtn>
                   <SmallBtn onClick={() => setInput("")} disabled={!input} icon={<RotateCcw className="h-3.5 w-3.5" />}>Clear</SmallBtn>
                 </div>
+
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Paste any raw text — meeting notes, transcripts, drafts, scrambled emails, brain-dumps, .docx contents, anything."
+                    className="h-[260px] w-full resize-none rounded-xl border border-border bg-background/50 p-4 font-mono text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                  />
+
+                  <div className="space-y-3">
+                    <ControlRow label="Type">
+                      <select value={docType} onChange={(e) => setDocType(e.target.value)}
+                        className="rounded-lg border border-border bg-background/60 px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none">
+                        {DOC_TYPES.map((d) => <option key={d.id} value={d.id}>{d.label}</option>)}
+                      </select>
+                    </ControlRow>
+                    <ControlRow label="Tone">
+                      {TONES.map((t) => <Chip key={t} active={tone === t} onClick={() => setTone(t)}>{t}</Chip>)}
+                    </ControlRow>
+                    <ControlRow label="Length">
+                      {LENGTHS.map((l) => <Chip key={l} active={length === l} onClick={() => setLength(l)}>{l}</Chip>)}
+                    </ControlRow>
+
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                      <div className="text-xs text-muted-foreground">⌘/Ctrl + Enter to refine</div>
+                      <button onClick={() => refine()} disabled={loading || !input.trim()}
+                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-accent px-5 py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition hover:brightness-110 disabled:opacity-40 disabled:shadow-none">
+                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                        {loading ? "Refining…" : "Refine document"}
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      <span className="mr-1 text-[10px] uppercase tracking-widest text-muted-foreground">Rewrite</span>
+                      {[
+                        { l: "Shorter", x: "Make the document materially shorter while keeping all key facts." },
+                        { l: "Longer", x: "Expand the document with more depth, examples and supporting detail." },
+                        { l: "Simplify", x: "Simplify the language to a 9th-grade reading level without losing meaning." },
+                        { l: "More formal", x: "Increase formality and remove colloquialisms." },
+                        { l: "Add visuals", x: "Add tables, callouts, stat blocks and a Mermaid diagram where they help." },
+                      ].map((a) => (
+                        <button key={a.l} onClick={() => refine(a.x)} disabled={loading || !input.trim()}
+                          className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40">
+                          {a.l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
+            )}
+          </div>
+        )}
 
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Paste any raw text — meeting notes, transcripts, drafts, scrambled emails, brain-dumps, .docx contents, anything."
-                className="h-[340px] w-full resize-none rounded-xl border border-border bg-background/50 p-4 font-mono text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-              />
-
-              <div className="mt-4 space-y-3">
-                <ControlRow label="Type">
-                  <select
-                    value={docType}
-                    onChange={(e) => setDocType(e.target.value)}
-                    className="rounded-lg border border-border bg-background/60 px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none"
-                  >
-                    {DOC_TYPES.map((d) => (
-                      <option key={d.id} value={d.id}>{d.label}</option>
-                    ))}
-                  </select>
-                </ControlRow>
-                <ControlRow label="Tone">
-                  {TONES.map((t) => (
-                    <Chip key={t} active={tone === t} onClick={() => setTone(t)}>{t}</Chip>
-                  ))}
-                </ControlRow>
-                <ControlRow label="Length">
-                  {LENGTHS.map((l) => (
-                    <Chip key={l} active={length === l} onClick={() => setLength(l)}>{l}</Chip>
-                  ))}
-                </ControlRow>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <div className="text-xs text-muted-foreground">⌘/Ctrl + Enter to refine</div>
-                <button
-                  onClick={() => refine()}
-                  disabled={loading || !input.trim()}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-accent px-5 py-2.5 font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition hover:brightness-110 disabled:opacity-40 disabled:shadow-none"
-                >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
-                  {loading ? "Refining…" : "Refine document"}
-                </button>
-              </div>
-
-              {/* Quick rewrite actions */}
-              <div className="mt-4 flex flex-wrap items-center gap-1.5">
-                <span className="mr-1 text-[10px] uppercase tracking-widest text-muted-foreground">Rewrite</span>
-                {[
-                  { l: "Shorter", x: "Make the document materially shorter while keeping all key facts." },
-                  { l: "Longer", x: "Expand the document with more depth, examples and supporting detail." },
-                  { l: "Simplify", x: "Simplify the language to a 9th-grade reading level without losing meaning." },
-                  { l: "More formal", x: "Increase formality and remove colloquialisms." },
-                  { l: "Add visuals", x: "Add tables, callouts, stat blocks and a Mermaid diagram where they help." },
-                ].map((a) => (
-                  <button key={a.l} onClick={() => refine(a.x)} disabled={loading || !input.trim()}
-                    className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40">
-                    {a.l}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* OUTPUT PANEL */}
-          <div className={`rounded-2xl border border-border bg-card/60 p-5 shadow-[var(--shadow-elegant)] backdrop-blur ${zenMode ? "lg:col-span-2" : ""}`}>
+        {/* Full-width preview */}
+        <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-[var(--shadow-elegant)] backdrop-blur">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Sparkles className="h-4 w-4 text-primary" />
