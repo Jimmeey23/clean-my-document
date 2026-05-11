@@ -614,3 +614,10 @@
 .theme-newsprint .doc-body p:first-of-type { column-count: 1; }
 .theme-newsprint .doc-body blockquote { column-span: all; background: #fff; border-left-color: #111; }
 .theme-newsprint .doc-body table { column-span: all; }
+
+/* Preview frame: fullscreen + zoom + overflow safety */
+.preview-frame:fullscreen { background: #0b1020; padding: 2rem; overflow: auto; }
+.preview-frame:fullscreen .doc-sheet { box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+.doc-body { overflow-wrap: break-word; word-break: break-word; }
+.doc-body pre, .doc-body table { max-width: 100%; overflow-x: auto; }
+.doc-body img { max-width: 100%; height: auto; }
