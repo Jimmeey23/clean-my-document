@@ -409,8 +409,19 @@ function Home() {
               <PageSettingsPanel page={page} update={updatePage} />
             )}
 
-            <div className="max-h-[820px] overflow-auto rounded-xl bg-black/10 p-4">
-              <DocPreview markdown={output} themeId={themeId} editable={editable} title={title} page={page} onChange={setOutputTracked} />
+            <div ref={previewWrapRef} className="preview-frame relative max-h-[820px] overflow-auto rounded-xl bg-black/20 p-4">
+              <div className="sticky top-0 z-10 mb-2 flex items-center justify-between gap-2 rounded-lg bg-background/85 p-1.5 backdrop-blur">
+                <div className="flex items-center gap-1">
+                  <IconBtn onClick={() => setZoom((z) => Math.max(0.4, +(z - 0.1).toFixed(2)))} title="Zoom out"><ZoomOut className="h-3.5 w-3.5" /></IconBtn>
+                  <button onClick={() => setZoom(1)} className="min-w-[3.2rem] rounded-md border border-border bg-secondary px-2 py-1 text-[11px] tabular-nums hover:bg-muted">{Math.round(zoom * 100)}%</button>
+                  <IconBtn onClick={() => setZoom((z) => Math.min(2, +(z + 0.1).toFixed(2)))} title="Zoom in"><ZoomIn className="h-3.5 w-3.5" /></IconBtn>
+                </div>
+                <input type="range" min={0.4} max={2} step={0.05} value={zoom}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="mx-2 hidden flex-1 sm:block" />
+                <IconBtn onClick={toggleFullscreen} title="Toggle full screen"><Expand className="h-3.5 w-3.5" /></IconBtn>
+              </div>
+              <DocPreview markdown={output} themeId={themeId} editable={editable} title={title} page={page} zoom={zoom} onChange={setOutputTracked} />
             </div>
           </div>
         </div>
