@@ -1,4 +1,5 @@
 export type ThemeId =
+  | "p57-standard"
   | "p57-modern"
   | "p57-editorial"
   | "p57-noir"
@@ -31,6 +32,7 @@ export type Theme = {
 };
 
 export const THEMES: Theme[] = [
+  { id: "p57-standard",  label: "P57 Standard",  desc: "Default · formal JD-style document",        className: "theme-p57-standard",  swatch: ["#ffffff", "#0a2342", "#0a2342"] },
   { id: "p57-modern",    label: "P57 Modern",    desc: "Brand · crisp white, navy & cyan",          className: "theme-p57-modern",    swatch: ["#ffffff", "#25c6e6", "#0a2342"] },
   { id: "p57-editorial", label: "P57 Editorial", desc: "Brand serif on warm ivory",                 className: "theme-p57-editorial", swatch: ["#fbfaf6", "#25c6e6", "#0a2342"] },
   { id: "p57-noir",      label: "P57 Noir",      desc: "Brand on deep navy, cyan accents",          className: "theme-p57-noir",      swatch: ["#0a2342", "#25c6e6", "#ffffff"] },
@@ -55,7 +57,7 @@ export const THEMES: Theme[] = [
   { id: "ivory",         label: "Ivory Premium", desc: "Cream paper, refined typography",           className: "theme-ivory",         swatch: ["#fbf8f1", "#c8a25a", "#2a2418"] },
 ];
 
-export const DEFAULT_THEME: ThemeId = "p57-modern";
+export const DEFAULT_THEME: ThemeId = "p57-standard";
 
 export type DocType = {
   id: string;
@@ -169,7 +171,13 @@ export const DEFAULT_PAGE: PageConfig = {
   showPageNumbers: true,
   bodyFont: "",
   bodyScale: 1,
+  footerLeft: "",
+  footerRight: "",
+  headerText: "",
 };
+// override defaults set above (kept above for type completeness)
+DEFAULT_PAGE.footerLeft = "PROPERTY OF PHYSIQUE 57 INDIA";
+DEFAULT_PAGE.footerRight = "STANDARD OFFER LETTER 2026";
 
 export const BODY_FONTS: { id: string; label: string; value: string }[] = [
   { id: "default",   label: "Theme default", value: "" },
