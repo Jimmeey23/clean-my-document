@@ -74,7 +74,7 @@ function BrandFooter({ title, page, dark }: { title: string; page: PageConfig; d
   );
 }
 
-export function DocPreview({ markdown, themeId, editable, title, page, onChange }: Props) {
+export function DocPreview({ markdown, themeId, editable, title, page, zoom = 1, onChange }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const theme = THEMES.find((t) => t.id === themeId) ?? THEMES[0];
 
