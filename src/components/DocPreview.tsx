@@ -104,6 +104,8 @@ export function DocPreview({ markdown, themeId, editable, title, page, zoom = 1,
     "--doc-padding": marginSpec.value,
     "--doc-scale": String(page.bodyScale),
     fontFamily: page.bodyFont || undefined,
+    transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+    transformOrigin: "top center",
   } as CSSProperties;
 
   if (!markdown) {
