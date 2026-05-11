@@ -48,8 +48,56 @@ export function buildHtml(markdown: string, title: string, embedStyles = true): 
   return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>${styles}</head><body>${body}</body></html>`;
 }
 
+// Convert raw HTML blocks (callouts, cards, stat rows, kickers, pullquotes) emitted
+// by the AI into clean markdown so downstream exporters never leak tags or attributes.
+export function flattenHtml(md: string): string {
+  let s = md;
+  // Strip HTML comments
+  s = s.replace(/<!--[\s\S]*?-->/g, "");
+  // Headings
+  s = s.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, "\n# $1\n");
+  s = s.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, "\n## $1\n");
+  s = s.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, "\n### $1\n");
+  s = s.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, "\n#### $1\n");
+  s = s.replace(/<h5[^>]*>([\s\S]*?)<\/h5>/gi, "\n##### $1\n");
+  // Inline emphasis
+  s = s.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, "**$2**");
+  s = s.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi, "_$2_");
+  // Lists
+  s = s.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "\n- $1");
+  s = s.replace(/<\/?(ul|ol)[^>]*>/gi, "\n");
+  // Blockquote / pullquote
+  s = s.replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, (_m, inner) =>
+    "\n" + inner.split("\n").map((l: string) => "> " + l.trim()).filter((l: string) => l !== "> ").join("\n") + "\n"
+  );
+  // Stat block: extract label / value / delta
+  s = s.replace(/<div[^>]*class="[^"]*stat[^"]*"[^>]*>([\s\S]*?)<\/div>/gi, (_m, inner) => {
+    const label = (inner.match(/class="label"[^>]*>([\s\S]*?)</) || [])[1] || "";
+    const value = (inner.match(/class="value"[^>]*>([\s\S]*?)</) || [])[1] || "";
+    const delta = (inner.match(/class="delta[^"]*"[^>]*>([\s\S]*?)</) || [])[1] || "";
+    return `\n- **${label.trim()}:** ${value.trim()}${delta ? ` (${delta.trim()})` : ""}`;
+  });
+  // Card: pull out h4 + p
+  s = s.replace(/<div[^>]*class="[^"]*card[^"]*"[^>]*>([\s\S]*?)<\/div>/gi, (_m, inner) => "\n" + inner + "\n");
+  // Generic kicker / badge / span
+  s = s.replace(/<span[^>]*>([\s\S]*?)<\/span>/gi, "$1");
+  // Generic divs (callouts, cols)
+  s = s.replace(/<\/?div[^>]*>/gi, "\n");
+  // Line break
+  s = s.replace(/<br\s*\/?>/gi, "\n");
+  // Paragraphs
+  s = s.replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, "\n$1\n");
+  // Anything else
+  s = s.replace(/<[^>]+>/g, "");
+  // HTML entities
+  s = s.replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  // Collapse extra blank lines
+  s = s.replace(/\n{3,}/g, "\n\n");
+  return s.trim();
+}
+
 function stripMd(md: string): string {
-  return md
+  return flattenHtml(md)
     .replace(/```[\s\S]*?```/g, (m) => m.replace(/```\w*\n?|```/g, ""))
     .replace(/`([^`]+)`/g, "$1")
     .replace(/^#{1,6}\s+/gm, "")
