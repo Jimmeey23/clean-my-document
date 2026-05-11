@@ -38,6 +38,7 @@ type Props = {
   editable: boolean;
   title: string;
   page: PageConfig;
+  zoom?: number;
   onChange: (md: string) => void;
 };
 
@@ -73,7 +74,7 @@ function BrandFooter({ title, page, dark }: { title: string; page: PageConfig; d
   );
 }
 
-export function DocPreview({ markdown, themeId, editable, title, page, onChange }: Props) {
+export function DocPreview({ markdown, themeId, editable, title, page, zoom = 1, onChange }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const theme = THEMES.find((t) => t.id === themeId) ?? THEMES[0];
 
@@ -103,6 +104,8 @@ export function DocPreview({ markdown, themeId, editable, title, page, onChange 
     "--doc-padding": marginSpec.value,
     "--doc-scale": String(page.bodyScale),
     fontFamily: page.bodyFont || undefined,
+    transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+    transformOrigin: "top center",
   } as CSSProperties;
 
   if (!markdown) {
