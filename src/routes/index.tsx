@@ -56,6 +56,7 @@ function Home() {
   const [showPagePanel, setShowPagePanel] = useState(false);
   const [zenMode, setZenMode] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [showSource, setShowSource] = useState(true);
   const previewWrapRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
