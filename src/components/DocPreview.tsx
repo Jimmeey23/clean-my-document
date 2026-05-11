@@ -38,6 +38,7 @@ type Props = {
   editable: boolean;
   title: string;
   page: PageConfig;
+  zoom?: number;
   onChange: (md: string) => void;
 };
 
