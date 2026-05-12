@@ -49,7 +49,9 @@ export const cleanText = createServerFn({ method: "POST" })
     const styleHint = [
       `Preferred style: ${data.style}.`,
       data.docTypeHint ? `Document type guidance: ${data.docTypeHint}` : "",
-    ].filter(Boolean).join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -69,11 +71,12 @@ export const cleanText = createServerFn({ method: "POST" })
     if (!res.ok) {
       const body = await res.text();
       if (res.status === 429) throw new Error("Rate limit reached. Try again shortly.");
-      if (res.status === 402) throw new Error("AI credits exhausted. Add credits in Workspace settings.");
+      if (res.status === 402)
+        throw new Error("AI credits exhausted. Add credits in Workspace settings.");
       throw new Error(`AI gateway error ${res.status}: ${body.slice(0, 200)}`);
     }
 
-    const json = await res.json() as { choices?: Array<{ message?: { content?: string } }> };
+    const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
     const content = json.choices?.[0]?.message?.content?.trim() ?? "";
     if (!content) throw new Error("Empty response from AI");
 

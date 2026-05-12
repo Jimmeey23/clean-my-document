@@ -2,15 +2,22 @@ import FileSaver from "file-saver";
 const { saveAs } = FileSaver;
 import { marked } from "marked";
 import jsPDF from "jspdf";
-import {
-  Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType,
-} from "docx";
+import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType } from "docx";
 
 marked.setOptions({ gfm: true, breaks: false });
 
 export type ExportFormat =
-  | "pdf" | "docx" | "html" | "markdown" | "txt"
-  | "rtf" | "json" | "latex" | "xml" | "epub-html" | "csv-tables";
+  | "pdf"
+  | "docx"
+  | "html"
+  | "markdown"
+  | "txt"
+  | "rtf"
+  | "json"
+  | "latex"
+  | "xml"
+  | "epub-html"
+  | "csv-tables";
 
 export const FORMATS: { id: ExportFormat; label: string; ext: string; desc: string }[] = [
   { id: "pdf", label: "PDF", ext: "pdf", desc: "Print-ready document" },
@@ -26,11 +33,16 @@ export const FORMATS: { id: ExportFormat; label: string; ext: string; desc: stri
   { id: "csv-tables", label: "CSV (tables)", ext: "csv", desc: "Extracted tables" },
 ];
 
-const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+const escapeHtml = (s: string) =>
+  s.replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
+  );
 
 export function buildHtml(markdown: string, title: string, embedStyles = true): string {
   const body = marked.parse(flattenHtml(markdown)) as string;
-  const styles = embedStyles ? `<style>
+  const styles = embedStyles
+    ? `<style>
     body{font-family:Arial,system-ui,sans-serif;max-width:820px;margin:2.5rem auto;padding:0 2rem;line-height:1.65;color:#111;background:#fff;}
     h1{font-family:Arial,system-ui,sans-serif;font-size:2.1rem;letter-spacing:.18em;text-align:center;text-transform:uppercase;color:#0a2342;border-bottom:2px solid #0a2342;padding-bottom:.7rem;margin-bottom:1.5rem;}
     h2{font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase;color:#0a2342;margin-top:2rem;border-bottom:1px solid #d4dbe5;padding-bottom:.35rem;}
@@ -45,7 +57,8 @@ export function buildHtml(markdown: string, title: string, embedStyles = true): 
     th{background:#f1f4f8;color:#0a2342;text-transform:uppercase;font-size:.78rem;letter-spacing:.06em;}
     a{color:#0a2342;}
     hr{border:none;border-top:1px solid #d4dbe5;margin:2rem 0;}
-  </style>` : "";
+  </style>`
+    : "";
   return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>${styles}</head><body>${body}</body></html>`;
 }
 
@@ -68,8 +81,16 @@ export function flattenHtml(md: string): string {
   s = s.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "\n- $1");
   s = s.replace(/<\/?(ul|ol)[^>]*>/gi, "\n");
   // Blockquote / pullquote
-  s = s.replace(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi, (_m, inner) =>
-    "\n" + inner.split("\n").map((l: string) => "> " + l.trim()).filter((l: string) => l !== "> ").join("\n") + "\n"
+  s = s.replace(
+    /<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi,
+    (_m, inner) =>
+      "\n" +
+      inner
+        .split("\n")
+        .map((l: string) => "> " + l.trim())
+        .filter((l: string) => l !== "> ")
+        .join("\n") +
+      "\n",
   );
   // Stat block: extract label / value / delta
   s = s.replace(/<div[^>]*class="[^"]*stat[^"]*"[^>]*>([\s\S]*?)<\/div>/gi, (_m, inner) => {
@@ -79,7 +100,10 @@ export function flattenHtml(md: string): string {
     return `\n- **${label.trim()}:** ${value.trim()}${delta ? ` (${delta.trim()})` : ""}`;
   });
   // Card: pull out h4 + p
-  s = s.replace(/<div[^>]*class="[^"]*card[^"]*"[^>]*>([\s\S]*?)<\/div>/gi, (_m, inner) => "\n" + inner + "\n");
+  s = s.replace(
+    /<div[^>]*class="[^"]*card[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
+    (_m, inner) => "\n" + inner + "\n",
+  );
   // Generic kicker / badge / span
   s = s.replace(/<span[^>]*>([\s\S]*?)<\/span>/gi, "$1");
   // Generic divs (callouts, cols)
@@ -91,7 +115,13 @@ export function flattenHtml(md: string): string {
   // Anything else
   s = s.replace(/<[^>]+>/g, "");
   // HTML entities
-  s = s.replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  s = s
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
   // Collapse extra blank lines
   s = s.replace(/\n{3,}/g, "\n\n");
   return s.trim();
@@ -127,11 +157,29 @@ function exportPdf(rawMd: string, title: string) {
   const maxW = pageW - margin * 2;
   let y = margin;
 
-  const ensure = (h: number) => { if (y + h > pageH - margin) { doc.addPage(); y = margin; } };
-  const writeBlock = (text: string, opts: { size: number; bold?: boolean; italic?: boolean; gap?: number; color?: [number, number, number] }) => {
-    doc.setFont("times", opts.bold ? (opts.italic ? "bolditalic" : "bold") : (opts.italic ? "italic" : "normal"));
+  const ensure = (h: number) => {
+    if (y + h > pageH - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+  const writeBlock = (
+    text: string,
+    opts: {
+      size: number;
+      bold?: boolean;
+      italic?: boolean;
+      gap?: number;
+      color?: [number, number, number];
+    },
+  ) => {
+    doc.setFont(
+      "times",
+      opts.bold ? (opts.italic ? "bolditalic" : "bold") : opts.italic ? "italic" : "normal",
+    );
     doc.setFontSize(opts.size);
-    if (opts.color) doc.setTextColor(...opts.color); else doc.setTextColor(20, 18, 14);
+    if (opts.color) doc.setTextColor(...opts.color);
+    else doc.setTextColor(20, 18, 14);
     const lines = doc.splitTextToSize(text, maxW);
     for (const ln of lines) {
       ensure(opts.size * 1.3);
@@ -159,22 +207,50 @@ function exportPdf(rawMd: string, title: string) {
         doc.setFontSize(10);
         doc.setTextColor(40, 30, 10);
         let cy = y + 8;
-        for (const cl of codeLines) { doc.text(cl, margin + 8, cy); cy += 12; }
+        for (const cl of codeLines) {
+          doc.text(cl, margin + 8, cy);
+          cy += 12;
+        }
         y += h + 6;
-        codeBuf = []; inCode = false;
+        codeBuf = [];
+        inCode = false;
       } else inCode = true;
-      i++; continue;
+      i++;
+      continue;
     }
-    if (inCode) { codeBuf.push(line); i++; continue; }
+    if (inCode) {
+      codeBuf.push(line);
+      i++;
+      continue;
+    }
 
-    if (/^#\s+/.test(line)) writeBlock(line.replace(/^#\s+/, ""), { size: 22, bold: true, gap: 12 });
-    else if (/^##\s+/.test(line)) writeBlock(line.replace(/^##\s+/, ""), { size: 16, bold: true, gap: 8, color: [110, 75, 20] });
-    else if (/^###\s+/.test(line)) writeBlock(line.replace(/^###\s+/, ""), { size: 13, bold: true, gap: 6 });
-    else if (/^>\s?/.test(line)) writeBlock(line.replace(/^>\s?/, ""), { size: 11, italic: true, gap: 6, color: [80, 70, 50] });
-    else if (/^[-*+]\s+/.test(line)) writeBlock("•  " + line.replace(/^[-*+]\s+/, ""), { size: 11, gap: 2 });
+    if (/^#\s+/.test(line))
+      writeBlock(line.replace(/^#\s+/, ""), { size: 22, bold: true, gap: 12 });
+    else if (/^##\s+/.test(line))
+      writeBlock(line.replace(/^##\s+/, ""), {
+        size: 16,
+        bold: true,
+        gap: 8,
+        color: [110, 75, 20],
+      });
+    else if (/^###\s+/.test(line))
+      writeBlock(line.replace(/^###\s+/, ""), { size: 13, bold: true, gap: 6 });
+    else if (/^>\s?/.test(line))
+      writeBlock(line.replace(/^>\s?/, ""), {
+        size: 11,
+        italic: true,
+        gap: 6,
+        color: [80, 70, 50],
+      });
+    else if (/^[-*+]\s+/.test(line))
+      writeBlock("•  " + line.replace(/^[-*+]\s+/, ""), { size: 11, gap: 2 });
     else if (/^\d+\.\s+/.test(line)) writeBlock(line, { size: 11, gap: 2 });
-    else if (/^---+$/.test(line)) { ensure(10); doc.setDrawColor(200, 180, 130); doc.line(margin, y, pageW - margin, y); y += 12; }
-    else if (line.trim() === "") y += 6;
+    else if (/^---+$/.test(line)) {
+      ensure(10);
+      doc.setDrawColor(200, 180, 130);
+      doc.line(margin, y, pageW - margin, y);
+      y += 12;
+    } else if (line.trim() === "") y += 6;
     else writeBlock(stripMd(line), { size: 11, gap: 4 });
     i++;
   }
@@ -192,31 +268,66 @@ async function exportDocx(rawMd: string, title: string) {
   const md = flattenHtml(rawMd);
   const children: Paragraph[] = [];
   const lines = md.split("\n");
-  let inCode = false; let codeBuf: string[] = [];
+  let inCode = false;
+  let codeBuf: string[] = [];
 
-  const para = (text: string, opts: { heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel]; bold?: boolean; italic?: boolean; size?: number } = {}) => {
-    children.push(new Paragraph({
-      heading: opts.heading,
-      alignment: AlignmentType.LEFT,
-      children: [new TextRun({ text, bold: opts.bold, italics: opts.italic, size: opts.size, font: "Georgia" })],
-    }));
+  const para = (
+    text: string,
+    opts: {
+      heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel];
+      bold?: boolean;
+      italic?: boolean;
+      size?: number;
+    } = {},
+  ) => {
+    children.push(
+      new Paragraph({
+        heading: opts.heading,
+        alignment: AlignmentType.LEFT,
+        children: [
+          new TextRun({
+            text,
+            bold: opts.bold,
+            italics: opts.italic,
+            size: opts.size,
+            font: "Georgia",
+          }),
+        ],
+      }),
+    );
   };
 
   for (const line of lines) {
     if (line.startsWith("```")) {
       if (inCode) {
-        for (const cl of codeBuf) children.push(new Paragraph({ children: [new TextRun({ text: cl, font: "Consolas", size: 20 })] }));
-        codeBuf = []; inCode = false;
+        for (const cl of codeBuf)
+          children.push(
+            new Paragraph({ children: [new TextRun({ text: cl, font: "Consolas", size: 20 })] }),
+          );
+        codeBuf = [];
+        inCode = false;
       } else inCode = true;
       continue;
     }
-    if (inCode) { codeBuf.push(line); continue; }
+    if (inCode) {
+      codeBuf.push(line);
+      continue;
+    }
     if (/^#\s+/.test(line)) para(line.replace(/^#\s+/, ""), { heading: HeadingLevel.HEADING_1 });
-    else if (/^##\s+/.test(line)) para(line.replace(/^##\s+/, ""), { heading: HeadingLevel.HEADING_2 });
-    else if (/^###\s+/.test(line)) para(line.replace(/^###\s+/, ""), { heading: HeadingLevel.HEADING_3 });
+    else if (/^##\s+/.test(line))
+      para(line.replace(/^##\s+/, ""), { heading: HeadingLevel.HEADING_2 });
+    else if (/^###\s+/.test(line))
+      para(line.replace(/^###\s+/, ""), { heading: HeadingLevel.HEADING_3 });
     else if (/^>\s?/.test(line)) para(line.replace(/^>\s?/, ""), { italic: true });
-    else if (/^[-*+]\s+/.test(line)) children.push(new Paragraph({ text: line.replace(/^[-*+]\s+/, ""), bullet: { level: 0 } }));
-    else if (/^\d+\.\s+/.test(line)) children.push(new Paragraph({ text: line.replace(/^\d+\.\s+/, ""), numbering: { reference: "num", level: 0 } as any }));
+    else if (/^[-*+]\s+/.test(line))
+      children.push(new Paragraph({ text: line.replace(/^[-*+]\s+/, ""), bullet: { level: 0 } }));
+    else if (/^\d+\.\s+/.test(line))
+      children.push(
+        new Paragraph({
+          text: line.replace(/^\d+\.\s+/, ""),
+          numbering: { reference: "num", level: 0 } as any,
+        }),
+      );
     else if (line.trim() === "") children.push(new Paragraph({ text: "" }));
     else para(stripMd(line));
   }
@@ -231,11 +342,15 @@ function mdToRtf(rawMd: string): string {
   const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/\{/g, "\\{").replace(/\}/g, "\\}");
   const parts: string[] = [];
   for (const line of md.split("\n")) {
-    if (/^#\s+/.test(line)) parts.push(`\\pard\\fs40\\b ${esc(line.replace(/^#\s+/, ""))}\\b0\\par`);
-    else if (/^##\s+/.test(line)) parts.push(`\\pard\\fs32\\b ${esc(line.replace(/^##\s+/, ""))}\\b0\\par`);
-    else if (/^###\s+/.test(line)) parts.push(`\\pard\\fs26\\b ${esc(line.replace(/^###\s+/, ""))}\\b0\\par`);
+    if (/^#\s+/.test(line))
+      parts.push(`\\pard\\fs40\\b ${esc(line.replace(/^#\s+/, ""))}\\b0\\par`);
+    else if (/^##\s+/.test(line))
+      parts.push(`\\pard\\fs32\\b ${esc(line.replace(/^##\s+/, ""))}\\b0\\par`);
+    else if (/^###\s+/.test(line))
+      parts.push(`\\pard\\fs26\\b ${esc(line.replace(/^###\s+/, ""))}\\b0\\par`);
     else if (/^>\s?/.test(line)) parts.push(`\\pard\\i ${esc(line.replace(/^>\s?/, ""))}\\i0\\par`);
-    else if (/^[-*+]\s+/.test(line)) parts.push(`\\pard\\bullet  ${esc(line.replace(/^[-*+]\s+/, ""))}\\par`);
+    else if (/^[-*+]\s+/.test(line))
+      parts.push(`\\pard\\bullet  ${esc(line.replace(/^[-*+]\s+/, ""))}\\par`);
     else if (line.trim() === "") parts.push("\\par");
     else parts.push(`\\pard ${esc(stripMd(line))}\\par`);
   }
@@ -244,15 +359,53 @@ function mdToRtf(rawMd: string): string {
 
 function mdToLatex(rawMd: string): string {
   const md = flattenHtml(rawMd);
-  const esc = (s: string) => s.replace(/([&%$#_{}])/g, "\\$1").replace(/~/g, "\\textasciitilde{}").replace(/\^/g, "\\textasciicircum{}");
-  const out: string[] = ["\\documentclass[11pt]{article}", "\\usepackage[utf8]{inputenc}", "\\usepackage{geometry}", "\\geometry{margin=1in}", "\\usepackage{hyperref}", "\\begin{document}"];
+  const esc = (s: string) =>
+    s
+      .replace(/([&%$#_{}])/g, "\\$1")
+      .replace(/~/g, "\\textasciitilde{}")
+      .replace(/\^/g, "\\textasciicircum{}");
+  const out: string[] = [
+    "\\documentclass[11pt]{article}",
+    "\\usepackage[utf8]{inputenc}",
+    "\\usepackage{geometry}",
+    "\\geometry{margin=1in}",
+    "\\usepackage{hyperref}",
+    "\\begin{document}",
+  ];
   let inList = false;
   for (const line of md.split("\n")) {
-    if (/^#\s+/.test(line)) { if (inList) { out.push("\\end{itemize}"); inList = false; } out.push(`\\section*{${esc(line.replace(/^#\s+/, ""))}}`); }
-    else if (/^##\s+/.test(line)) { if (inList) { out.push("\\end{itemize}"); inList = false; } out.push(`\\subsection*{${esc(line.replace(/^##\s+/, ""))}}`); }
-    else if (/^###\s+/.test(line)) { if (inList) { out.push("\\end{itemize}"); inList = false; } out.push(`\\subsubsection*{${esc(line.replace(/^###\s+/, ""))}}`); }
-    else if (/^[-*+]\s+/.test(line)) { if (!inList) { out.push("\\begin{itemize}"); inList = true; } out.push(`\\item ${esc(line.replace(/^[-*+]\s+/, ""))}`); }
-    else { if (inList) { out.push("\\end{itemize}"); inList = false; } if (line.trim()) out.push(esc(stripMd(line))); else out.push(""); }
+    if (/^#\s+/.test(line)) {
+      if (inList) {
+        out.push("\\end{itemize}");
+        inList = false;
+      }
+      out.push(`\\section*{${esc(line.replace(/^#\s+/, ""))}}`);
+    } else if (/^##\s+/.test(line)) {
+      if (inList) {
+        out.push("\\end{itemize}");
+        inList = false;
+      }
+      out.push(`\\subsection*{${esc(line.replace(/^##\s+/, ""))}}`);
+    } else if (/^###\s+/.test(line)) {
+      if (inList) {
+        out.push("\\end{itemize}");
+        inList = false;
+      }
+      out.push(`\\subsubsection*{${esc(line.replace(/^###\s+/, ""))}}`);
+    } else if (/^[-*+]\s+/.test(line)) {
+      if (!inList) {
+        out.push("\\begin{itemize}");
+        inList = true;
+      }
+      out.push(`\\item ${esc(line.replace(/^[-*+]\s+/, ""))}`);
+    } else {
+      if (inList) {
+        out.push("\\end{itemize}");
+        inList = false;
+      }
+      if (line.trim()) out.push(esc(stripMd(line)));
+      else out.push("");
+    }
   }
   if (inList) out.push("\\end{itemize}");
   out.push("\\end{document}");
@@ -288,11 +441,13 @@ function mdToTree(rawMd: string): Node[] {
 
 function mdToXml(md: string, title: string): string {
   const tree = mdToTree(md);
-  const esc = (s: string) => s.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]!));
+  const esc = (s: string) =>
+    s.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c]!);
   const render = (n: Node): string => {
     if (n.type === "heading") return `<heading level="${n.level}">${esc(n.text!)}</heading>`;
     if (n.type === "paragraph") return `<paragraph>${esc(n.text!)}</paragraph>`;
-    if (n.type === "list") return `<list>${n.children!.map((c) => `<item>${esc(c.text!)}</item>`).join("")}</list>`;
+    if (n.type === "list")
+      return `<list>${n.children!.map((c) => `<item>${esc(c.text!)}</item>`).join("")}</list>`;
     return "";
   };
   return `<?xml version="1.0" encoding="UTF-8"?>\n<document title="${esc(title)}">\n${tree.map(render).join("\n")}\n</document>`;
@@ -307,7 +462,10 @@ function extractCsvTables(md: string): string {
       const rows: string[] = [];
       while (i < lines.length && /^\|.+\|$/.test(lines[i])) {
         if (!/^\|[\s:|-]+\|$/.test(lines[i])) {
-          const cells = lines[i].slice(1, -1).split("|").map((c) => c.trim().replace(/"/g, '""'));
+          const cells = lines[i]
+            .slice(1, -1)
+            .split("|")
+            .map((c) => c.trim().replace(/"/g, '""'));
           rows.push(cells.map((c) => `"${c}"`).join(","));
         }
         i++;
@@ -319,31 +477,58 @@ function extractCsvTables(md: string): string {
 }
 
 export async function exportAs(format: ExportFormat, markdown: string) {
-  const title = extractTitle(markdown).replace(/[^\w\s-]/g, "").replace(/\s+/g, "-") || "document";
+  const title =
+    extractTitle(markdown)
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-") || "document";
   switch (format) {
-    case "pdf": return exportPdf(markdown, title);
-    case "docx": return exportDocx(markdown, title);
+    case "pdf":
+      return exportPdf(markdown, title);
+    case "docx":
+      return exportDocx(markdown, title);
     case "html": {
       const html = buildHtml(markdown, title);
       saveAs(new Blob([html], { type: "text/html;charset=utf-8" }), `${title}.html`);
       return;
     }
     case "epub-html": {
-      const html = buildHtml(markdown, title, true)
-        .replace("<html>", '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">');
+      const html = buildHtml(markdown, title, true).replace(
+        "<html>",
+        '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">',
+      );
       saveAs(new Blob([html], { type: "application/xhtml+xml" }), `${title}.epub.html`);
       return;
     }
-    case "markdown": saveAs(new Blob([markdown], { type: "text/markdown;charset=utf-8" }), `${title}.md`); return;
-    case "txt": saveAs(new Blob([stripMd(markdown)], { type: "text/plain;charset=utf-8" }), `${title}.txt`); return;
-    case "rtf": saveAs(new Blob([mdToRtf(markdown)], { type: "application/rtf" }), `${title}.rtf`); return;
+    case "markdown":
+      saveAs(new Blob([markdown], { type: "text/markdown;charset=utf-8" }), `${title}.md`);
+      return;
+    case "txt":
+      saveAs(new Blob([stripMd(markdown)], { type: "text/plain;charset=utf-8" }), `${title}.txt`);
+      return;
+    case "rtf":
+      saveAs(new Blob([mdToRtf(markdown)], { type: "application/rtf" }), `${title}.rtf`);
+      return;
     case "json": {
-      const obj = { title, generatedAt: new Date().toISOString(), nodes: mdToTree(markdown), markdown };
-      saveAs(new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" }), `${title}.json`);
+      const obj = {
+        title,
+        generatedAt: new Date().toISOString(),
+        nodes: mdToTree(markdown),
+        markdown,
+      };
+      saveAs(
+        new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" }),
+        `${title}.json`,
+      );
       return;
     }
-    case "latex": saveAs(new Blob([mdToLatex(markdown)], { type: "application/x-latex" }), `${title}.tex`); return;
-    case "xml": saveAs(new Blob([mdToXml(markdown, title)], { type: "application/xml" }), `${title}.xml`); return;
-    case "csv-tables": saveAs(new Blob([extractCsvTables(markdown)], { type: "text/csv" }), `${title}.csv`); return;
+    case "latex":
+      saveAs(new Blob([mdToLatex(markdown)], { type: "application/x-latex" }), `${title}.tex`);
+      return;
+    case "xml":
+      saveAs(new Blob([mdToXml(markdown, title)], { type: "application/xml" }), `${title}.xml`);
+      return;
+    case "csv-tables":
+      saveAs(new Blob([extractCsvTables(markdown)], { type: "text/csv" }), `${title}.csv`);
+      return;
   }
 }
