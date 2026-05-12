@@ -324,8 +324,7 @@ async function exportDocx(rawMd: string, title: string) {
     else if (/^\d+\.\s+/.test(line))
       children.push(
         new Paragraph({
-          text: line.replace(/^\d+\.\s+/, ""),
-          numbering: { reference: "num", level: 0 } as any,
+          text: line,
         }),
       );
     else if (line.trim() === "") children.push(new Paragraph({ text: "" }));
