@@ -96,6 +96,10 @@ const LENGTHS = ["Auto", "Brief", "Standard", "Detailed", "Exhaustive"] as const
 
 const SAMPLE = `quarterly review q3 - revenue grew 18% YoY hitting $4.2M, big driver was enterprise tier (up 31%). churn ticked up to 4.1% mostly in starter cohort. team shipped 14 features incl. SSO, audit logs, and the new analytics dashboard. hiring: closed 3 senior eng roles, 1 PM, 2 designers. risks: AWS cost up 22%, need to address. plans for q4: launch ai assistant, expand EU presence, ship mobile beta. customer NPS up to 52 from 47.`;
 
+function errorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
 function extractTitle(md: string) {
   const m = md.match(/^#\s+(.+)$/m);
   return m?.[1]?.trim() ?? "Untitled Document";
@@ -178,8 +182,8 @@ function Home() {
         });
         setOutputTracked(res.markdown);
         toast.success("Document refined");
-      } catch (e: any) {
-        toast.error(e?.message ?? "Failed to refine");
+      } catch (e: unknown) {
+        toast.error(errorMessage(e, "Failed to refine"));
       } finally {
         setLoading(false);
       }
@@ -211,8 +215,8 @@ function Home() {
         setInput(t);
       }
       toast.success(`Loaded ${file.name}`);
-    } catch (e: any) {
-      toast.error(e?.message ?? "Could not read file");
+    } catch (e: unknown) {
+      toast.error(errorMessage(e, "Could not read file"));
     }
   };
 
