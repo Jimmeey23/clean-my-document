@@ -88,7 +88,8 @@ function Home() {
     try {
       const dt = DOC_TYPES.find((d) => d.id === docType);
       const directives = [
-        docType !== "auto" && `Document type: ${dt?.label}.`,
+        "Use the shared Physique 57 default template exactly: H1 title, intro paragraphs, compact meta line, all-caps H2 sections, Roman-numbered all-caps H3 subsections, tight bullets, and a closing section. Do not use an alternate structure.",
+        docType !== "auto" && `Document type: ${dt?.label}; adapt labels only, not the shared template sequence.`,
         `Tone: ${tone}.`,
         length !== "Auto" && `Length: ${length}.`,
         extra,
