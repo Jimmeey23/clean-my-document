@@ -29,21 +29,22 @@ export const FORMATS: { id: ExportFormat; label: string; ext: string; desc: stri
 const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
 export function buildHtml(markdown: string, title: string, embedStyles = true): string {
-  const body = marked.parse(markdown) as string;
+  const body = marked.parse(flattenHtml(markdown)) as string;
   const styles = embedStyles ? `<style>
-    body{font-family:Georgia,'Times New Roman',serif;max-width:780px;margin:3rem auto;padding:0 2rem;line-height:1.7;color:#1a1610;background:#fdfbf5;}
-    h1{font-size:2.2rem;border-bottom:2px solid #d4b675;padding-bottom:.5rem;}
-    h2{color:#7a5a1f;margin-top:2rem;}
-    h3{margin-top:1.4rem;}
-    blockquote{border-left:3px solid #c8a25a;padding:.4rem 1rem;color:#555;background:#f5efdf;margin:1rem 0;}
-    code{background:#efe7d2;padding:.1rem .35rem;border-radius:4px;font-family:ui-monospace,monospace;font-size:.92em;}
-    pre{background:#1f1a12;color:#f4e8c8;padding:1rem;border-radius:8px;overflow:auto;}
+    body{font-family:Arial,system-ui,sans-serif;max-width:820px;margin:2.5rem auto;padding:0 2rem;line-height:1.65;color:#111;background:#fff;}
+    h1{font-family:Arial,system-ui,sans-serif;font-size:2.1rem;letter-spacing:.18em;text-align:center;text-transform:uppercase;color:#0a2342;border-bottom:2px solid #0a2342;padding-bottom:.7rem;margin-bottom:1.5rem;}
+    h2{font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase;color:#0a2342;margin-top:2rem;border-bottom:1px solid #d4dbe5;padding-bottom:.35rem;}
+    h3{font-size:.92rem;letter-spacing:.1em;text-transform:uppercase;color:#0a2342;margin-top:1.3rem;}
+    blockquote{border-left:3px solid #25c6e6;padding:.7rem 1rem;color:#1a1a1a;background:#f7f9fc;margin:1rem 0;}
+    code{background:#f1f4f8;padding:.1rem .35rem;border-radius:4px;font-family:ui-monospace,monospace;font-size:.92em;}
+    pre{background:#0a2342;color:#f4fbfd;padding:1rem;border-radius:8px;overflow:auto;}
     pre code{background:transparent;color:inherit;padding:0;}
-    table{border-collapse:collapse;width:100%;margin:1rem 0;font-family:system-ui,sans-serif;}
-    th,td{border:1px solid #d8cfb4;padding:.5rem .75rem;text-align:left;}
-    th{background:#f0e6cc;}
-    a{color:#7a5a1f;}
-    hr{border:none;border-top:1px solid #d8cfb4;margin:2rem 0;}
+    table{border-collapse:collapse;width:100%;margin:1rem 0;font-family:Arial,system-ui,sans-serif;font-size:.9rem;table-layout:fixed;}
+    tr{height:40px;max-height:40px;}
+    th,td{border:1px solid #e2e8f0;padding:.35rem .65rem;text-align:left;vertical-align:middle;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-height:40px;}
+    th{background:#f1f4f8;color:#0a2342;text-transform:uppercase;font-size:.78rem;letter-spacing:.06em;}
+    a{color:#0a2342;}
+    hr{border:none;border-top:1px solid #d4dbe5;margin:2rem 0;}
   </style>` : "";
   return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>${styles}</head><body>${body}</body></html>`;
 }
