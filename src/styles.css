@@ -148,8 +148,9 @@
 .doc-body code { background: #f3f3f0; padding: 0.1rem 0.35rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.9em; }
 .doc-body pre { background: #111; color: #f5f5f0; padding: 1rem; border-radius: 6px; overflow-x: auto; }
 .doc-body pre code { background: transparent; color: inherit; padding: 0; }
-.doc-body table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.95rem; }
-.doc-body th, .doc-body td { border: 1px solid #e2e2dc; padding: 0.55rem 0.8rem; text-align: left; vertical-align: top; }
+.doc-body table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.9rem; table-layout: fixed; }
+.doc-body tr { height: 40px; max-height: 40px; }
+.doc-body th, .doc-body td { border: 1px solid #e2e2dc; padding: 0.35rem 0.65rem; text-align: left; vertical-align: middle; max-height: 40px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .doc-body th { background: #f7f5ee; font-weight: 600; }
 .doc-body a { color: #1a4d8c; text-decoration: underline; text-underline-offset: 2px; }
 .doc-body hr { border: none; border-top: 1px solid #e2e2dc; margin: 2rem 0; }
@@ -401,15 +402,17 @@
   border-radius: 8px; overflow: hidden;
   box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 8px 24px -12px rgba(10,35,66,0.12);
 }
+.doc-body thead tr,
+.doc-body tbody tr { height: 40px; max-height: 40px; }
 .doc-body thead th {
   background: linear-gradient(180deg, #f7fbfd, #eef6fa);
   border-bottom: 2px solid var(--p57-cyan, #25c6e6);
   text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.78rem;
-  color: var(--p57-navy, #0a2342); padding: 0.7rem 0.9rem;
+  color: var(--p57-navy, #0a2342); padding: 0.35rem 0.65rem;
 }
 .doc-body tbody tr:nth-child(even) td { background: #fbfdfe; }
 .doc-body tbody tr:hover td { background: #f1fafd; }
-.doc-body td { border: none; border-bottom: 1px solid #eef2f5; padding: 0.65rem 0.9rem; }
+.doc-body td { border: none; border-bottom: 1px solid #eef2f5; padding: 0.35rem 0.65rem; }
 
 /* --- Premium blockquote callouts --- */
 .doc-body blockquote {
